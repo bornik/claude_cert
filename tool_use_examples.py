@@ -4,10 +4,11 @@ Demonstrates how to build tool-use loops, define schemas, and handle tool select
 """
 
 import json
+from dotenv import load_dotenv
 from anthropic import Anthropic
 
+load_dotenv()
 client = Anthropic()
-
 # ============================================================================
 # EXAMPLE 1: Simple Tool-Use Loop
 # ============================================================================
