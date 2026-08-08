@@ -139,7 +139,7 @@ Details, sample output, and how to iterate on the prompt: see [`02-prompting-cra
 ```bash
 uv run 04-tool-use-schema-design/1_simple_loop.py        # basic tool-use loop
 uv run 04-tool-use-schema-design/2_parallel_calls.py     # multiple tools in one turn
-uv run 04-tool-use-schema-design/3_schema_design.py      # good vs bad schema (no API calls)
+uv run 04-tool-use-schema-design/3_schema_design.py      # good vs bad schema, proven with live calls
 uv run 04-tool-use-schema-design/4_ticket_escalation.py  # real-world: classify → escalate
 uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failures
 ```

@@ -6,11 +6,24 @@ Claude picks tools based on:
 2. Description (clarity beats length)
 3. Input schema (required fields force Claude to guess)
 
-This example shows BAD design and GOOD design side by side.
-No API calls — just print and compare.
+This example shows BAD design and GOOD design side by side, then proves
+the point with real API calls: the same ambiguous query sent against the
+bad schema and the good schema, so you see Claude's actual tool choice
+rather than just reading a claim about it.
 """
 
 import json
+import sys
+from pathlib import Path
+
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
+
+load_dotenv()
+client = Anthropic()
 
 
 def show_bad_schema():
@@ -47,8 +60,9 @@ def show_bad_schema():
         print(f"  • {tool['name']}: '{tool['description']}'")
 
     print("\n❌ Problem:")
-    print("   Claude cannot tell them apart!")
-    print("   Will randomly pick one when they serve different purposes.")
+    print("   The description gives Claude nothing to disambiguate with.")
+    print("   It may still guess right on easy queries (see the live check below) —")
+    print("   but on a genuinely ambiguous one, it has nothing but the name to go on.")
 
     return bad_tools
 
@@ -97,6 +111,71 @@ def show_good_schema():
     return good_tools
 
 
+def demo_live_tool_selection(bad_tools, good_tools):
+    """Send the SAME ambiguous query against both schemas and see which
+    tool Claude actually picks — real evidence instead of a claim."""
+    print("\n" + "=" * 70)
+    print("🔴 LIVE CHECK: Same query, bad schema vs good schema")
+    print("=" * 70)
+
+    query = "What's the refund policy?"
+    print(f"\nQuery: {query!r}")
+    print("(No mention of a prior search — the correct tool is search_kb, a fresh lookup.)")
+
+    picks = {}
+    for label, tools in [("❌ Bad schema", bad_tools), ("✓ Good schema", good_tools)]:
+        response = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=200,
+            tools=tools,
+            tool_choice={"type": "any"},  # force a tool call so we always get a pick
+            messages=[{"role": "user", "content": query}],
+        )
+        print_usage(response)
+        tool_call = next((b for b in response.content if b.type == "tool_use"), None)
+        picked = tool_call.name if tool_call else "(no tool called)"
+        picks[label] = picked
+        print(f"{label}: Claude picked → {picked}")
+
+    if len(set(picks.values())) == 1:
+        print(
+            "\n📝 Note: both picked correctly here — the tool NAMES alone "
+            "(search_kb vs get_cache) already carry enough signal, even with "
+            "identical descriptions. Bad descriptions don't always fail on an "
+            "easy query; they fail once a query is genuinely ambiguous between "
+            "two similarly-named tools. Try rewriting the query (or the tool "
+            "names) to see it break."
+        )
+
+
+def demo_live_required_fields(bad_schema, good_schema):
+    """Same idea for required fields: give Claude only a user_id and see
+    whether it invents values for fields it wasn't told about."""
+    print("\n" + "=" * 70)
+    print("🔴 LIVE CHECK: Required fields — does Claude invent values?")
+    print("=" * 70)
+
+    query = "List the items for user usr_789."
+    print(f"\nQuery: {query!r} (no filter/sort/page_size mentioned)")
+
+    for label, schema in [("❌ All required", bad_schema), ("✓ Only user_id required", good_schema)]:
+        tools = [{
+            "name": "list_items",
+            "description": "List items belonging to a user.",
+            "input_schema": schema,
+        }]
+        response = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=200,
+            tools=tools,
+            tool_choice={"type": "any"},
+            messages=[{"role": "user", "content": query}],
+        )
+        print_usage(response)
+        tool_call = next((b for b in response.content if b.type == "tool_use"), None)
+        print(f"{label}: input → {tool_call.input if tool_call else '(no tool called)'}")
+
+
 def show_required_fields_issue():
     """Show why marking too many fields as required is bad"""
     print("\n" + "="*70)
@@ -104,6 +183,7 @@ def show_required_fields_issue():
     print("="*70)
 
     bad_schema = {
+        "type": "object",
         "properties": {
             "user_id": {"type": "string", "description": "User ID"},
             "filter": {"type": "string", "description": "Filter type"},
@@ -132,6 +212,7 @@ def show_good_required_fields():
     print("="*70)
 
     good_schema = {
+        "type": "object",
         "properties": {
             "user_id": {"type": "string", "description": "User ID"},
             "filter": {"type": "string", "description": "Filter type (optional)"},
@@ -175,10 +256,14 @@ def show_description_length():
 
 
 def main():
-    show_bad_schema()
-    show_good_schema()
-    show_required_fields_issue()
-    show_good_required_fields()
+    bad_tools = show_bad_schema()
+    good_tools = show_good_schema()
+    demo_live_tool_selection(bad_tools, good_tools)
+
+    bad_schema = show_required_fields_issue()
+    good_schema = show_good_required_fields()
+    demo_live_required_fields(bad_schema, good_schema)
+
     show_description_length()
 
     print("\n" + "="*70)

@@ -40,7 +40,7 @@ uv run 04-tool-use-schema-design/2_parallel_calls.py
 ---
 
 ### 3️⃣ `3_schema_design.py` — Good vs Bad Schemas
-**What:** Compare schema quality (no API calls)
+**What:** Compare schema quality, then prove it with live API calls — same query sent against a bad and a good schema, so you see Claude's actual tool choice / actual invented values instead of just reading a claim about it
 
 **Key concepts:**
 - Overlapping descriptions (bad)
