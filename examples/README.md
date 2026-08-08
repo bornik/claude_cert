@@ -106,9 +106,6 @@ uv run examples/2_parallel_calls.py
 uv run examples/3_schema_design.py
 uv run examples/4_ticket_escalation.py
 uv run examples/5_error_handling.py
-
-# Or run from tool_use_examples.py
-uv run tool_use_examples.py
 ```
 
 ---
