@@ -1,6 +1,8 @@
-# Examples Directory
+# Module 04 — Tool-use and Schema Design
 
 Each file demonstrates one tool-use concept in isolation.
+
+**Start here:** open [`tool-use-guide.html`](tool-use-guide.html) in your browser for a visual overview before running the scripts below.
 
 ## Files
 
@@ -16,7 +18,7 @@ Each file demonstrates one tool-use concept in isolation.
 **When to use:** First time learning about tools
 
 ```bash
-uv run examples/1_simple_loop.py
+uv run 04-tool-use-schema-design/1_simple_loop.py
 ```
 
 ---
@@ -32,7 +34,7 @@ uv run examples/1_simple_loop.py
 **When to use:** When tools don't depend on each other's results
 
 ```bash
-uv run examples/2_parallel_calls.py
+uv run 04-tool-use-schema-design/2_parallel_calls.py
 ```
 
 ---
@@ -49,7 +51,7 @@ uv run examples/2_parallel_calls.py
 **When to use:** Before writing your own tools
 
 ```bash
-uv run examples/3_schema_design.py
+uv run 04-tool-use-schema-design/3_schema_design.py
 ```
 
 ---
@@ -65,7 +67,7 @@ uv run examples/3_schema_design.py
 **When to use:** After learning the basics, see a real scenario
 
 ```bash
-uv run examples/4_ticket_escalation.py
+uv run 04-tool-use-schema-design/4_ticket_escalation.py
 ```
 
 ---
@@ -82,7 +84,7 @@ uv run examples/4_ticket_escalation.py
 **When to use:** Building production systems
 
 ```bash
-uv run examples/5_error_handling.py
+uv run 04-tool-use-schema-design/5_error_handling.py
 ```
 
 ---
@@ -101,11 +103,11 @@ uv run examples/5_error_handling.py
 
 ```bash
 # Run each individually
-uv run examples/1_simple_loop.py
-uv run examples/2_parallel_calls.py
-uv run examples/3_schema_design.py
-uv run examples/4_ticket_escalation.py
-uv run examples/5_error_handling.py
+uv run 04-tool-use-schema-design/1_simple_loop.py
+uv run 04-tool-use-schema-design/2_parallel_calls.py
+uv run 04-tool-use-schema-design/3_schema_design.py
+uv run 04-tool-use-schema-design/4_ticket_escalation.py
+uv run 04-tool-use-schema-design/5_error_handling.py
 ```
 
 ---

@@ -1,125 +1,117 @@
 # Claude API Learning Project
 
-A hands-on project for learning Claude API features: prompt engineering, tool-use loops, schema design, and structured output.
+A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & Tool Use** certification. Each folder maps to a course module — run the code for a module while you're on its lesson screens.
+
+---
+
+## 📖 Course Map
+
+| Module | Course Section | Folder | Status |
+|---|---|---|---|
+| 02 | Prompting Craft | [`02-prompting-craft/`](02-prompting-craft/) | ✅ |
+| 03 | Extended Thinking | *(not started)* | ⬜ |
+| 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) | ✅ |
+| 05 | Streaming Responses | *(not started)* | ⬜ |
+
+As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
 ---
 
 ## 📁 Project Structure
 
-### Core Files
+```
+claude cert/
+├── README.md                        ← you are here
+├── 02-prompting-craft/
+│   ├── README.md
+│   ├── process_ticket.py            ← prompt runner (support ticket classifier)
+│   ├── system_prompt.txt
+│   └── examples.json
+├── 04-tool-use-schema-design/
+│   ├── README.md
+│   ├── tool-use-guide.html          ← visual overview, open in browser
+│   ├── 1_simple_loop.py
+│   ├── 2_parallel_calls.py
+│   ├── 3_schema_design.py
+│   ├── 4_ticket_escalation.py
+│   └── 5_error_handling.py
+├── pyproject.toml / uv.lock         ← dependencies
+└── .env / .env.example              ← API key config
+```
 
-| File | Purpose | Edit to... |
-|------|---------|-----------|
-| **`process_ticket.py`** | Prompt runner — support ticket classifier | Test different system prompts and examples |
-| **`system_prompt.txt`** | System prompt for ticket classification | Change the task (extraction, translation, etc.) |
-| **`examples.json`** | Sample inputs for `process_ticket.py` | Add your own test cases |
-
-### Learning Files
-
-| File | Purpose | What to learn |
-|------|---------|---------------|
-| **`docs/tool-use-guide.html`** | Interactive visual guide | Overview of tool-use concepts (open in browser) |
-| **`examples/`** | Individual example scripts (1-5) | Each tool-use concept in isolation |
-
-### Configuration
-
-| File | Purpose |
-|------|---------|
-| **`.env`** | API key (create from `.env.example`) |
-| **`pyproject.toml`** | Dependencies (Python, Anthropic SDK) |
+Root holds only project setup (dependencies, env config, top-level docs). Everything module-specific lives in its own `NN-module-name/` folder with its own README.
 
 ---
 
-## 🚀 Setup
+## 🚀 Setup (from scratch)
 
-### 1. Install dependencies
+New machine, nothing installed yet? Follow these in order.
+
+### 1. Install Homebrew (if you don't have it)
 ```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Check it worked: `brew --version`
+
+### 2. Install `uv` (Python package/version manager — replaces pip + pyenv)
+```bash
+brew install uv
+```
+Check it worked: `uv --version`
+
+You don't need to separately install Python — `uv` will download and manage the exact version this project needs (`3.11`, see `.python-version`) automatically on first run.
+
+### 3. Get the project and install dependencies
+```bash
+git clone <this-repo-url>
+cd "claude cert"
 uv sync
 ```
+`uv sync` reads `pyproject.toml` / `uv.lock`, installs Python 3.11 if missing, and creates an isolated virtual environment with the `anthropic` SDK etc. — no manual `venv` steps needed.
 
-### 2. Configure API key
-Copy `.env.example` to `.env` and add your key:
+### 4. Get an Anthropic API key
+Sign up / log in at [console.anthropic.com](https://console.anthropic.com), create an API key under **API Keys**.
+
+### 5. Configure your API key
 ```bash
 cp .env.example .env
-# Then edit .env:
-# ANTHROPIC_API_KEY=sk-ant-...
 ```
+Open `.env` in any editor and set:
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### 6. Verify it works
+```bash
+uv run 02-prompting-craft/process_ticket.py
+```
+If you see a JSON classification result printed, you're set up correctly.
 
 ---
 
 ## 📚 Usage
 
-### Quick Start: Prompt Runner
-
-Run the support ticket classifier on example inputs:
+### Module 02 — Prompting Craft
 
 ```bash
-# Run first example
-uv run process_ticket.py
-
-# Run custom input
-uv run process_ticket.py "My API key stopped working"
-
-# Run all examples
-uv run process_ticket.py --all
+uv run 02-prompting-craft/process_ticket.py                       # run first example
+uv run 02-prompting-craft/process_ticket.py "My API key stopped working"
+uv run 02-prompting-craft/process_ticket.py --all                 # run all examples
 ```
 
-**What it does:** Loads a system prompt, sends it with your input to Claude, pretty-prints JSON results.
+Details, sample output, and how to iterate on the prompt: see [`02-prompting-craft/README.md`](02-prompting-craft/README.md).
 
----
-
-### Learning Tool-Use
-
-Explore how Claude calls tools, not just generates text:
+### Module 04 — Tool-use and Schema Design
 
 ```bash
-# Run individual examples (one concept per file)
-uv run examples/1_simple_loop.py        # Basic tool-use loop
-uv run examples/2_parallel_calls.py     # Multiple tools in one turn
-uv run examples/3_schema_design.py      # Good vs bad schema (no API calls)
-uv run examples/4_ticket_escalation.py  # Real-world: classify → escalate
-uv run examples/5_error_handling.py     # Handling tool failures
+uv run 04-tool-use-schema-design/1_simple_loop.py        # basic tool-use loop
+uv run 04-tool-use-schema-design/2_parallel_calls.py     # multiple tools in one turn
+uv run 04-tool-use-schema-design/3_schema_design.py      # good vs bad schema (no API calls)
+uv run 04-tool-use-schema-design/4_ticket_escalation.py  # real-world: classify → escalate
+uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failures
 ```
 
----
-
-## 🧪 Examples Explained
-
-### `process_ticket.py` — Support Ticket Classifier
-- **What:** Reads a support ticket, outputs JSON with category + urgency
-- **System prompt:** `system_prompt.txt`
-- **Test cases:** `examples.json`
-- **How to modify:** Change the system prompt to classify emails, extract data, translate, etc.
-
-**Example run:**
-```bash
-$ uv run process_ticket.py "Our team is locked out and demo is in 20 minutes"
-{
-  "category": "technical",
-  "urgency": "critical",
-  "summary": "Team account lockout blocking client demo"
-}
-```
-
----
-
-### `examples/` Directory — One Concept Per File
-
-Five progressively advanced examples, each file is standalone and runnable:
-
-```
-examples/
-├── 1_simple_loop.py          # Basic: define tool → call → result
-├── 2_parallel_calls.py       # Multiple tools in one response
-├── 3_schema_design.py        # Good vs bad schema comparison
-├── 4_ticket_escalation.py    # Dependent tool calls (classify → escalate)
-└── 5_error_handling.py       # is_error flag and retries
-```
-
-Run any individually to understand one pattern:
-```bash
-uv run examples/1_simple_loop.py
-```
+Details per example: see [`04-tool-use-schema-design/README.md`](04-tool-use-schema-design/README.md).
 
 ---
 
@@ -133,63 +125,12 @@ CLAUDE_MODEL=claude-sonnet-5    # Balanced
 CLAUDE_MODEL=claude-haiku-4-5   # Fast, cheaper (default)
 ```
 
-### Change the task
-Edit `system_prompt.txt` and add test cases to `examples.json`:
-
+### Starting a new module
 ```bash
-# Example: change from ticket classification to email summarization
-nano system_prompt.txt
-nano examples.json
-uv run process_ticket.py --all
+mkdir 05-streaming-responses
+# add a README.md with the lesson's key takeaways + screen reference
+# add example scripts as you go
 ```
-
-### Compare prompt versions
-Keep multiple versions:
-```bash
-cp system_prompt.txt system_prompt_v1.txt
-# Edit system_prompt.txt
-uv run process_ticket.py --all
-# Compare results
-```
-
-### Use structured output (no tool-use)
-```python
-# Instead of relying on prompt + parsing, use Claude's built-in JSON mode
-from anthropic import Anthropic
-
-client = Anthropic()
-response = client.messages.create(
-    model="claude-haiku-4-5",
-    max_tokens=1024,
-    system="You are a ticket classifier",
-    messages=[...],
-    # Add this for strict JSON:
-    response_format={"type": "json_object"}
-)
-```
-
----
-
-## 📖 Learning Path
-
-1. **Start here:** Open `docs/tool-use-guide.html` in your browser — visual overview of all concepts
-2. **Then:** `uv run process_ticket.py --all` — see prompts in action
-3. **Then:** `uv run examples/1_simple_loop.py` — understand the tool-use loop
-4. **Then:** `uv run examples/2_parallel_calls.py` — see why schemas matter
-5. **Then:** `uv run examples/4_ticket_escalation.py` — real multi-step flow
-6. **Finally:** Read comments in `examples/` code — understand why design choices matter
-
----
-
-## 🎯 Key Concepts
-
-| Concept | File | Example |
-|---------|------|---------|
-| System prompts | `system_prompt.txt` | "You are a support ticket processor..." |
-| Structured input | `examples.json` | Array of test cases |
-| Tool schemas | `examples/3_schema_design.py` | How Claude picks tools |
-| Tool-use loops | `examples/1_simple_loop.py` | Request → tool call → result → continue |
-| Error handling | `examples/5_error_handling.py` | `is_error: True` |
 
 ---
 
@@ -214,7 +155,7 @@ ModuleNotFoundError: No module named 'anthropic'
 
 ## 📝 What to Try Next
 
-- Write your own system prompt for a different task
-- Add more examples to `examples.json`
-- Modify a tool schema in `examples/3_schema_design.py` and see if Claude still picks it correctly
+- Write your own system prompt for a different task in `02-prompting-craft/`
+- Add more test cases to `02-prompting-craft/examples.json`
+- Modify a tool schema in `04-tool-use-schema-design/3_schema_design.py` and see if Claude still picks it correctly
 - Read the [Claude API docs](https://docs.anthropic.com) for more advanced patterns
