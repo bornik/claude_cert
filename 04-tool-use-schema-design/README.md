@@ -89,13 +89,32 @@ uv run 04-tool-use-schema-design/5_error_handling.py
 
 ---
 
+### 6️⃣ `6_boundary_case_failure.py` — "Why does Claude keep calling the wrong tool?"
+
+**What:** Reproduces the exact diagnostic scenario from the lesson: two overlapping tools (`search_docs` / `get_context_summary`, both described as "find/retrieve information") tested against a **boundary case** — a question whose answer is already sitting in the conversation history.
+
+**Key concepts:**
+- A schema can pass every happy-path test and still fail near the boundary between two similar tools
+- The fix is one exclusion sentence per tool ("do not use this when...") — not a rewrite
+- `tool_choice: "auto"` vs `"any"` — forcing a tool call (common in production agent harnesses) is what actually exposes this failure mode; leaving Claude free to skip tools can mask it
+- Real API output can be less dramatic than the story — see the script's own honest note about when this actually reproduces vs. when a capable model shrugs it off
+
+**When to use:** After `3_schema_design.py`, when you want to see this *specific* named failure mode (not just "overlapping descriptions are bad" in the abstract)
+
+```bash
+uv run 04-tool-use-schema-design/6_boundary_case_failure.py
+```
+
+---
+
 ## Recommended Learning Path
 
 1. **Start:** `1_simple_loop.py` — understand the loop
 2. **Then:** `2_parallel_calls.py` — see why order matters
 3. **Then:** `3_schema_design.py` — understand tool selection
-4. **Then:** `4_ticket_escalation.py` — real-world flow
-5. **Finally:** `5_error_handling.py` — production robustness
+4. **Then:** `6_boundary_case_failure.py` — see the boundary-case failure mode live
+5. **Then:** `4_ticket_escalation.py` — real-world flow
+6. **Finally:** `5_error_handling.py` — production robustness
 
 ---
 
@@ -108,6 +127,7 @@ uv run 04-tool-use-schema-design/2_parallel_calls.py
 uv run 04-tool-use-schema-design/3_schema_design.py
 uv run 04-tool-use-schema-design/4_ticket_escalation.py
 uv run 04-tool-use-schema-design/5_error_handling.py
+uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 ```
 
 ---

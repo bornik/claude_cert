@@ -50,7 +50,8 @@ claude-cert/
 │   ├── 2_parallel_calls.py
 │   ├── 3_schema_design.py
 │   ├── 4_ticket_escalation.py
-│   └── 5_error_handling.py
+│   ├── 5_error_handling.py
+│   └── 6_boundary_case_failure.py
 ├── 05-streaming-responses/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
@@ -142,6 +143,7 @@ uv run 04-tool-use-schema-design/2_parallel_calls.py     # multiple tools in one
 uv run 04-tool-use-schema-design/3_schema_design.py      # good vs bad schema, proven with live calls
 uv run 04-tool-use-schema-design/4_ticket_escalation.py  # real-world: classify → escalate
 uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failures
+uv run 04-tool-use-schema-design/6_boundary_case_failure.py  # named failure mode: overlapping descriptions at a boundary
 ```
 
 Details per example: see [`04-tool-use-schema-design/README.md`](04-tool-use-schema-design/README.md).
