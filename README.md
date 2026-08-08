@@ -52,7 +52,8 @@ claude-cert/
 │   ├── 4_ticket_escalation.py
 │   ├── 5_error_handling.py
 │   ├── 6_boundary_case_failure.py
-│   └── 7_mcp_connector.py       ← MCP as an alternative to manual schemas
+│   ├── 7_mcp_connector.py       ← MCP as an alternative to manual schemas
+│   └── 8_id_mismatch_bug.py     ← reproduces + fixes a real tool_use_id mismatch error
 ├── 05-streaming-responses/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
@@ -146,6 +147,7 @@ uv run 04-tool-use-schema-design/4_ticket_escalation.py  # real-world: classify 
 uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failures
 uv run 04-tool-use-schema-design/6_boundary_case_failure.py  # named failure mode: overlapping descriptions at a boundary
 uv run 04-tool-use-schema-design/7_mcp_connector.py      # MCP Connector — schemas written by someone else (expensive, don't loop)
+uv run 04-tool-use-schema-design/8_id_mismatch_bug.py    # triggers + fixes a real mismatched tool_use_id error
 ```
 
 Details per example: see [`04-tool-use-schema-design/README.md`](04-tool-use-schema-design/README.md).

@@ -128,6 +128,24 @@ uv run 04-tool-use-schema-design/7_mcp_connector.py
 
 ---
 
+### 8️⃣ `8_id_mismatch_bug.py` — Spot and Fix the Schema Bug (Checkpoint 3)
+
+**What:** Reproduces the certification checkpoint scenario live: the schema is valid, the tool description is specific, the tool result content is correct — and the request still gets rejected. The bug is a mismatched `tool_use_id`.
+
+**Key concepts:**
+- `tool_use` and `tool_result` are matched by **id**, not by position in the conversation
+- A wrong id isn't "slightly off" — the API treats it as a reference to a `tool_use` that doesn't exist and rejects the whole request
+- `tool_result` blocks are sent with `role="user"` even though your application generated the content — `role` marks who is sending the message, not who authored it
+- We trigger the real `400 invalid_request_error` first, then show the one-line fix
+
+**When to use:** After `1_simple_loop.py`, once you understand the basic loop and want to see how it breaks when the id plumbing is wrong
+
+```bash
+uv run 04-tool-use-schema-design/8_id_mismatch_bug.py
+```
+
+---
+
 ## Recommended Learning Path
 
 1. **Start:** `1_simple_loop.py` — understand the loop
@@ -136,7 +154,8 @@ uv run 04-tool-use-schema-design/7_mcp_connector.py
 4. **Then:** `6_boundary_case_failure.py` — see the boundary-case failure mode live
 5. **Then:** `4_ticket_escalation.py` — real-world flow
 6. **Then:** `5_error_handling.py` — production robustness
-7. **Finally:** `7_mcp_connector.py` — see the alternative to writing schemas yourself
+7. **Then:** `7_mcp_connector.py` — see the alternative to writing schemas yourself
+8. **Finally:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
 
 ---
 
@@ -151,6 +170,7 @@ uv run 04-tool-use-schema-design/4_ticket_escalation.py
 uv run 04-tool-use-schema-design/5_error_handling.py
 uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 uv run 04-tool-use-schema-design/7_mcp_connector.py  # expensive (~165k input tokens) — don't loop this one
+uv run 04-tool-use-schema-design/8_id_mismatch_bug.py  # triggers and fixes a real tool_use_id mismatch error
 ```
 
 ---
