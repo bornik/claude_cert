@@ -21,18 +21,24 @@ load_dotenv()
 client = Anthropic()
 
 QUESTION = (
-    "I have 3 boxes. Box A has twice as many apples as Box B. "
-    "Box C has 5 fewer apples than Box A and Box B combined. "
-    "If all three boxes together have 35 apples, how many are in each box?"
+    "Five suspects — Alice, Bob, Carol, Dave, and Eve — are questioned about a theft. "
+    "Exactly one of them is telling the truth; the other four are lying.\n"
+    "Alice says: 'Bob did it.'\n"
+    "Bob says: 'Alice did it.'\n"
+    "Carol says: 'I did not do it.'\n"
+    "Dave says: 'Eve did it.'\n"
+    "Eve says: 'Bob did it.'\n"
+    "Who stole it, and who is the one telling the truth? Check every case carefully "
+    "before answering."
 )
 
-BUDGETS = [1024, 4096]
+BUDGETS = [1024, 3072]
 
 
 def ask_with_budget(budget_tokens):
     response = client.messages.create(
         model="claude-haiku-4-5",
-        max_tokens=budget_tokens + 1024,
+        max_tokens=budget_tokens + 2048,
         thinking={"type": "enabled", "budget_tokens": budget_tokens},
         messages=[{"role": "user", "content": QUESTION}],
     )
