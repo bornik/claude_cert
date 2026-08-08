@@ -9,9 +9,9 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | Module | Course Section | Folder | Status |
 |---|---|---|---|
 | 02 | Prompting Craft | [`02-prompting-craft/`](02-prompting-craft/) | ✅ |
-| 03 | Extended Thinking | *(not started)* | ⬜ |
+| 03 | Extended Thinking | [`03-extended-thinking/`](03-extended-thinking/) | ✅ |
 | 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) | ✅ |
-| 05 | Streaming Responses | *(not started)* | ⬜ |
+| 05 | Streaming Responses | [`05-streaming-responses/`](05-streaming-responses/) | ✅ |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -32,6 +32,10 @@ claude-cert/
 │   ├── system_prompt.txt            ← refined prompt
 │   ├── system_prompt_bare.txt       ← bare/unconstrained prompt, for comparison
 │   └── examples.json
+├── 03-extended-thinking/
+│   ├── README.md
+│   ├── 1_basic_thinking.py
+│   └── 2_thinking_budget_comparison.py
 ├── 04-tool-use-schema-design/
 │   ├── README.md
 │   ├── tool-use-guide.html          ← visual overview, open in browser
@@ -40,6 +44,10 @@ claude-cert/
 │   ├── 3_schema_design.py
 │   ├── 4_ticket_escalation.py
 │   └── 5_error_handling.py
+├── 05-streaming-responses/
+│   ├── README.md
+│   ├── 1_basic_streaming.py
+│   └── 2_streaming_with_progress.py
 ├── pyproject.toml / uv.lock         ← dependencies
 └── .env / .env.example              ← API key config
 ```
@@ -119,6 +127,24 @@ uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failure
 ```
 
 Details per example: see [`04-tool-use-schema-design/README.md`](04-tool-use-schema-design/README.md).
+
+### Module 03 — Extended Thinking
+
+```bash
+uv run 03-extended-thinking/1_basic_thinking.py              # thinking block + final answer
+uv run 03-extended-thinking/2_thinking_budget_comparison.py  # small vs large budget_tokens
+```
+
+Details: see [`03-extended-thinking/README.md`](03-extended-thinking/README.md).
+
+### Module 05 — Streaming Responses
+
+```bash
+uv run 05-streaming-responses/1_basic_streaming.py           # text_stream helper
+uv run 05-streaming-responses/2_streaming_with_progress.py   # raw events + token tracking
+```
+
+Details: see [`05-streaming-responses/README.md`](05-streaming-responses/README.md).
 
 ---
 
