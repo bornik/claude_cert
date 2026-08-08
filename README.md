@@ -8,6 +8,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 
 | Module | Course Section | Folder | Status |
 |---|---|---|---|
+| 01 | MSO Foundations *(separate course track)* | [`01-mso-foundations/`](01-mso-foundations/) | ✅ |
 | 02 | Prompting Craft | [`02-prompting-craft/`](02-prompting-craft/) | ✅ |
 | 03 | Extended Thinking | [`03-extended-thinking/`](03-extended-thinking/) | ✅ |
 | 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) | ✅ |
@@ -25,6 +26,10 @@ Keep a running log of screen-by-screen takeaways in [`NOTES.md`](NOTES.md) as yo
 claude-cert/
 ├── README.md                        ← you are here
 ├── NOTES.md                         ← your screen-by-screen study log
+├── 01-mso-foundations/
+│   ├── README.md
+│   ├── 1_non_determinism.py
+│   └── 2_prompting_modes.py
 ├── 02-prompting-craft/
 │   ├── README.md
 │   ├── process_ticket.py            ← prompt runner (support ticket classifier)
@@ -104,13 +109,22 @@ If you see a JSON classification result printed, you're set up correctly.
 
 ## 📚 Usage
 
+### Module 01 — MSO Foundations
+
+```bash
+uv run 01-mso-foundations/1_non_determinism.py    # same prompt, different valid outputs
+uv run 01-mso-foundations/2_prompting_modes.py    # no-system vs system vs multi-turn
+```
+
+Details: see [`01-mso-foundations/README.md`](01-mso-foundations/README.md).
+
 ### Module 02 — Prompting Craft
 
 ```bash
 uv run 02-prompting-craft/process_ticket.py                       # run first example
 uv run 02-prompting-craft/process_ticket.py "My API key stopped working"
 uv run 02-prompting-craft/process_ticket.py --all                 # run all examples
-uv run 02-prompting-craft/process_ticket.py --diff "custom ticket"  # bare vs refined prompt, side by side
+uv run 02-prompting-craft/process_ticket.py --diff "Мене двічі списали гроші за підписку"  # bare vs refined prompt, side by side
 uv run 02-prompting-craft/prompt_iteration.py                     # the lesson's 6 revision passes, live
 ```
 
