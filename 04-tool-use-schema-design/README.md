@@ -107,6 +107,27 @@ uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 
 ---
 
+### 7️⃣ `7_mcp_connector.py` — MCP as an Alternative to Manual Schema Authoring
+
+**What:** Everything above assumes you write the tool schema and the execution function yourself. This example connects to a real remote MCP server (DeepWiki) via the API's MCP Connector — no locally-defined `input_schema`, no Python function that executes the call. The server supplies the tool definitions and runs the tool itself.
+
+**Key concepts:**
+- `mcp_servers` + a `{"type": "mcp_toolset", "mcp_server_name": ...}` entry in `tools` — requires the `mcp-client-2025-11-20` beta header
+- `mcp_tool_use` / `mcp_tool_result` content blocks — the same contract as `tool_use`/`tool_result`, just server-executed
+- Context cost controls: `defer_loading` (delay loading a tool def until needed) and per-tool `enabled` (allowlist which of the server's tools are exposed)
+- Manual authoring and MCP aren't mutually exclusive — MCP for breadth, hand-tuned descriptions (see `3_schema_design.py`, `6_boundary_case_failure.py`) for precision where it matters
+- Only remote (Streamable HTTP) servers work through the API connector — local stdio servers need Claude Code/Desktop as the client
+
+**Cost warning:** this one call pulls a full wiki page into context (~165k input tokens on the run we tested). Don't loop it.
+
+**When to use:** Once you've written a schema by hand and want to see the alternative — when someone else already built and maintains the integration
+
+```bash
+uv run 04-tool-use-schema-design/7_mcp_connector.py
+```
+
+---
+
 ## Recommended Learning Path
 
 1. **Start:** `1_simple_loop.py` — understand the loop
@@ -114,7 +135,8 @@ uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 3. **Then:** `3_schema_design.py` — understand tool selection
 4. **Then:** `6_boundary_case_failure.py` — see the boundary-case failure mode live
 5. **Then:** `4_ticket_escalation.py` — real-world flow
-6. **Finally:** `5_error_handling.py` — production robustness
+6. **Then:** `5_error_handling.py` — production robustness
+7. **Finally:** `7_mcp_connector.py` — see the alternative to writing schemas yourself
 
 ---
 
@@ -128,6 +150,7 @@ uv run 04-tool-use-schema-design/3_schema_design.py
 uv run 04-tool-use-schema-design/4_ticket_escalation.py
 uv run 04-tool-use-schema-design/5_error_handling.py
 uv run 04-tool-use-schema-design/6_boundary_case_failure.py
+uv run 04-tool-use-schema-design/7_mcp_connector.py  # expensive (~165k input tokens) — don't loop this one
 ```
 
 ---
