@@ -11,8 +11,14 @@ The basic pattern:
 This is the foundation of all tool-use patterns.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -54,6 +60,7 @@ def main():
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     print(f"\n🤖 Claude's decision: {response.stop_reason}")
 

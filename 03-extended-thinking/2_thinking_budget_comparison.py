@@ -8,8 +8,14 @@ compare thinking depth and answer quality side by side.
 Key: budget_tokens must be strictly less than max_tokens.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -30,6 +36,7 @@ def ask_with_budget(budget_tokens):
         thinking={"type": "enabled", "budget_tokens": budget_tokens},
         messages=[{"role": "user", "content": QUESTION}],
     )
+    print_usage(response)
     thinking = next((b.thinking for b in response.content if b.type == "thinking"), "")
     text = next((b.text for b in response.content if b.type == "text"), "")
     return thinking, text

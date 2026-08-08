@@ -18,6 +18,8 @@ As you reach a new module in the course, create `NN-module-name/` and add exampl
 
 Keep a running log of screen-by-screen takeaways in [`NOTES.md`](NOTES.md) as you go — it doubles as a study guide later.
 
+Every example prints a `💰 Usage (...)` line after each API call — input/output token counts and an estimated cost, via [`common/usage.py`](common/usage.py). Update the `PRICING` dict there if you switch to a different model.
+
 ---
 
 ## 📁 Project Structure
@@ -53,6 +55,8 @@ claude-cert/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
 │   └── 2_streaming_with_progress.py
+├── common/
+│   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
 └── .env / .env.example              ← API key config
 ```

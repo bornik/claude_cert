@@ -13,8 +13,14 @@ Key: is_error=True tells Claude "this failed, try a different approach"
 """
 
 import json
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -68,6 +74,7 @@ def scenario_successful(tools):
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     tool = next(
         (b for b in response.content if b.type == "tool_use"),
@@ -103,6 +110,7 @@ def scenario_error(tools):
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     tool = next(
         (b for b in response.content if b.type == "tool_use"),
@@ -142,6 +150,7 @@ def scenario_error(tools):
             tools=tools,
             messages=messages
         )
+        print_usage(response)
 
         final_text = next(
             (block.text for block in response.content if hasattr(block, "text")),
@@ -165,6 +174,7 @@ def scenario_error_with_retry(tools):
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     call_count = 0
     while response.stop_reason == "tool_use":
@@ -218,6 +228,7 @@ def scenario_error_with_retry(tools):
             tools=tools,
             messages=messages
         )
+        print_usage(response)
 
     final_text = next(
         (block.text for block in response.content if hasattr(block, "text")),

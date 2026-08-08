@@ -10,8 +10,14 @@ This is FASTER than sequential calls because:
 Key: Both need tool_result blocks in the next user turn.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -59,6 +65,7 @@ def main():
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     # Count how many tools were called
     tool_calls = [b for b in response.content if b.type == "tool_use"]
@@ -104,6 +111,7 @@ def main():
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     final_text = next(
         (block.text for block in response.content if hasattr(block, "text")),

@@ -9,8 +9,14 @@ Key event types: message_start, content_block_delta (the actual text
 chunks), message_delta (usage updates), message_stop.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -41,8 +47,11 @@ def main():
                 if event.usage and event.usage.output_tokens is not None:
                     output_tokens = event.usage.output_tokens
 
+        final_message = stream.get_final_message()
+
     print(f"\n\n📊 Event counts: {event_counts}")
     print(f"📊 Final output tokens: {output_tokens}")
+    print_usage(final_message)
 
 
 if __name__ == "__main__":

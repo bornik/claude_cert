@@ -10,8 +10,14 @@ budget_tokens must be less than max_tokens (and at least 1024).
 Key: response.content contains both a "thinking" block and a "text" block.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -42,6 +48,7 @@ def main():
             print(f"   {block.text}")
 
     print(f"\n📊 Stop reason: {response.stop_reason}")
+    print_usage(response)
 
 
 if __name__ == "__main__":

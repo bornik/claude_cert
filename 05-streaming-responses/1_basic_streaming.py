@@ -9,8 +9,14 @@ Key: stream.get_final_message() gives you the complete Message afterward,
 including usage stats — no need to accumulate text yourself.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -37,6 +43,7 @@ def main():
         final_message = stream.get_final_message()
 
     print(f"\n\n📊 Tokens used: {final_message.usage.output_tokens}")
+    print_usage(final_message)
 
 
 if __name__ == "__main__":

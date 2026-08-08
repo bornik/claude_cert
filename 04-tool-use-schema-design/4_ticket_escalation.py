@@ -15,8 +15,14 @@ This is YOUR project's pattern!
 """
 
 import json
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -104,6 +110,7 @@ def process_ticket(ticket, tools):
         tools=tools,
         messages=messages
     )
+    print_usage(response)
 
     # Handle the tool-use loop
     step = 1

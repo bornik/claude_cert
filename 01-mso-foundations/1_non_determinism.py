@@ -11,8 +11,14 @@ output — check for the underlying meaning/structure instead (see the JSON
 examples in 02-prompting-craft/).
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -26,6 +32,7 @@ def ask():
         max_tokens=100,
         messages=[{"role": "user", "content": PROMPT}],
     )
+    print_usage(response)
     return response.content[0].text
 
 

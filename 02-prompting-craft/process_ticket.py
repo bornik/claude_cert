@@ -1,10 +1,14 @@
 import argparse
 import json
 import os
+import sys
 from pathlib import Path
 
 from anthropic import Anthropic
 from dotenv import load_dotenv
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 
@@ -28,6 +32,7 @@ def run_prompt(user_input: str, prompt_version: str = "refined") -> str:
         system=system_prompt,
         messages=[{"role": "user", "content": user_input}],
     )
+    print_usage(response, MODEL)
     return response.content[0].text
 
 

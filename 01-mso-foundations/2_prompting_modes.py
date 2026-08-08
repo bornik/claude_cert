@@ -11,8 +11,14 @@ Key: `system` is a separate top-level parameter, not a message in the
 user/assistant messages sent back on every request — the API is stateless.
 """
 
+import sys
+from pathlib import Path
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from common.usage import print_usage
 
 load_dotenv()
 client = Anthropic()
@@ -26,6 +32,7 @@ def mode_1_no_system():
         max_tokens=150,
         messages=[{"role": "user", "content": QUESTION}],
     )
+    print_usage(response)
     return response.content[0].text
 
 
@@ -36,6 +43,7 @@ def mode_2_with_system():
         system="You are a blunt, no-nonsense senior engineer. Answer in exactly one short paragraph, no pleasantries.",
         messages=[{"role": "user", "content": QUESTION}],
     )
+    print_usage(response)
     return response.content[0].text
 
 
@@ -50,6 +58,7 @@ def mode_3_multi_turn():
         max_tokens=150,
         messages=messages,
     )
+    print_usage(response)
     return response.content[0].text
 
 
