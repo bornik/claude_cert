@@ -19,8 +19,7 @@ A hands-on project for learning Claude API features: prompt engineering, tool-us
 | File | Purpose | What to learn |
 |------|---------|---------------|
 | **`docs/tool-use-guide.html`** | Interactive visual guide | Overview of tool-use concepts (open in browser) |
-| **`tool_use_examples.py`** | Complete tool-use patterns | How Claude calls tools, handles schemas, manages loops |
-| **`examples/`** | Individual example scripts | Each concept in isolation |
+| **`examples/`** | Individual example scripts (1-5) | Each tool-use concept in isolation |
 
 ### Configuration
 
@@ -74,13 +73,10 @@ uv run process_ticket.py --all
 Explore how Claude calls tools, not just generates text:
 
 ```bash
-# Run all tool-use examples
-uv run tool_use_examples.py
-
-# Or run one concept at a time (see examples/ directory)
+# Run individual examples (one concept per file)
 uv run examples/1_simple_loop.py        # Basic tool-use loop
 uv run examples/2_parallel_calls.py     # Multiple tools in one turn
-uv run examples/3_schema_design.py      # Good vs bad schema
+uv run examples/3_schema_design.py      # Good vs bad schema (no API calls)
 uv run examples/4_ticket_escalation.py  # Real-world: classify → escalate
 uv run examples/5_error_handling.py     # Handling tool failures
 ```
@@ -107,20 +103,9 @@ $ uv run process_ticket.py "Our team is locked out and demo is in 20 minutes"
 
 ---
 
-### `tool_use_examples.py` — Tool-Use Patterns
-Five progressively advanced examples:
-
-1. **Simple Loop** — Define tool → Claude calls it → you return result → Claude continues
-2. **Parallel Calls** — Claude calls multiple tools in one turn (faster)
-3. **Schema Design** — Why good descriptions matter; "do not use" clauses beat vague ones
-4. **Ticket Escalation** — Real flow: classify ticket → if critical, escalate to urgent queue
-5. **Error Handling** — Returning errors with `is_error: True` so Claude retries differently
-
----
-
 ### `examples/` Directory — One Concept Per File
 
-Each file is standalone and runnable:
+Five progressively advanced examples, each file is standalone and runnable:
 
 ```
 examples/
@@ -192,7 +177,7 @@ response = client.messages.create(
 3. **Then:** `uv run examples/1_simple_loop.py` — understand the tool-use loop
 4. **Then:** `uv run examples/2_parallel_calls.py` — see why schemas matter
 5. **Then:** `uv run examples/4_ticket_escalation.py` — real multi-step flow
-6. **Finally:** Read comments in `tool_use_examples.py` and `examples/` — understand why design choices matter
+6. **Finally:** Read comments in `examples/` code — understand why design choices matter
 
 ---
 
