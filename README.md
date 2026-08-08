@@ -15,17 +15,22 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
+Keep a running log of screen-by-screen takeaways in [`NOTES.md`](NOTES.md) as you go — it doubles as a study guide later.
+
 ---
 
 ## 📁 Project Structure
 
 ```
-claude cert/
+claude-cert/
 ├── README.md                        ← you are here
+├── NOTES.md                         ← your screen-by-screen study log
 ├── 02-prompting-craft/
 │   ├── README.md
 │   ├── process_ticket.py            ← prompt runner (support ticket classifier)
-│   ├── system_prompt.txt
+│   ├── prompt_iteration.py          ← 6-pass "bare → refined" prompt walkthrough
+│   ├── system_prompt.txt            ← refined prompt
+│   ├── system_prompt_bare.txt       ← bare/unconstrained prompt, for comparison
 │   └── examples.json
 ├── 04-tool-use-schema-design/
 │   ├── README.md
@@ -97,6 +102,8 @@ If you see a JSON classification result printed, you're set up correctly.
 uv run 02-prompting-craft/process_ticket.py                       # run first example
 uv run 02-prompting-craft/process_ticket.py "My API key stopped working"
 uv run 02-prompting-craft/process_ticket.py --all                 # run all examples
+uv run 02-prompting-craft/process_ticket.py --diff "custom ticket"  # bare vs refined prompt, side by side
+uv run 02-prompting-craft/prompt_iteration.py                     # the lesson's 6 revision passes, live
 ```
 
 Details, sample output, and how to iterate on the prompt: see [`02-prompting-craft/README.md`](02-prompting-craft/README.md).
