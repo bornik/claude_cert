@@ -201,8 +201,9 @@ Details: see [`05-streaming-responses/README.md`](05-streaming-responses/README.
 ### Module 06 — Context Engineering ⚠️ *unverified course structure*
 
 ```bash
-uv run 06-context-engineering/1_context_window_growth.py  # watch input_tokens climb turn over turn
-uv run 06-context-engineering/2_compaction.py              # same task, summarized tool results
+uv run 06-context-engineering/1_context_window_growth.py     # watch input_tokens climb turn over turn
+uv run 06-context-engineering/2_compaction.py                 # same task, summarized tool results
+uv run 06-context-engineering/3_context_failure_diagnosis.py  # checkpoint 5: degrading tool selection from context bloat
 ```
 
 Details: see [`06-context-engineering/README.md`](06-context-engineering/README.md).

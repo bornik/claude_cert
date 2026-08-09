@@ -30,9 +30,23 @@ uv run 06-context-engineering/1_context_window_growth.py
 uv run 06-context-engineering/2_compaction.py
 ```
 
+### 3️⃣ `3_context_failure_diagnosis.py` — Diagnose the Context Failure (Checkpoint 5)
+**What:** Reproduces the certification checkpoint scenario: an agent calls `fetch_policy_document` correctly across several turns, each returning a large result, then needs to call `apply_coverage_rule` — and, per the checkpoint, tool selection can degrade at that point (falling back to a generic `search_knowledge_base`) purely from accumulated context, not a schema problem. Runs the same task with raw accumulation vs. pruned/summarized results side by side.
+
+**Key concepts:**
+- Correct tool selection across turns 1-4 rules out a schema/description problem — the failure is turn-specific, not tool-specific
+- The mechanism is accumulated raw tool-result context crowding out the current instruction, not `max_tokens` or a vague description
+- The fix is pruning/compacting old results before the turn that needs precise selection — same idea as `2_compaction.py`, applied specifically to protect tool-selection accuracy
+- Honest result: on this run, `claude-haiku-4-5` picked correctly in both scenarios at this scale — the script explains why that doesn't invalidate the mechanism and how to push the example further toward failure
+
+```bash
+uv run 06-context-engineering/3_context_failure_diagnosis.py
+```
+
 ## Running All Examples
 
 ```bash
 uv run 06-context-engineering/1_context_window_growth.py
 uv run 06-context-engineering/2_compaction.py
+uv run 06-context-engineering/3_context_failure_diagnosis.py
 ```
