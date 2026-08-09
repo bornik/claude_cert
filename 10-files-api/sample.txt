@@ -1,0 +1,5 @@
+Quarterly report summary:
+Q1 revenue was $1.2M, up 15% from Q4. The main driver was the new
+enterprise tier, which closed 8 deals in March alone. Churn stayed
+flat at 3%. Support ticket volume rose 20%, mostly billing questions
+related to the new tier's proration rules.

@@ -1,0 +1,38 @@
+# Module 06 — Context Engineering
+
+Every `tool_result` Claude gets back is appended to the context window and stays there for the rest of the session — it's never dropped automatically. In a single-turn prompt this is invisible. In a multi-step agent session running many tool calls, the window fills up fast, and once it fills, the agent either compacts (loses detail) or stalls before the task is done.
+
+**Note:** this module's structure is reconstructed from general course-page/documentation descriptions, not a verified screen-by-screen syllabus. Update these examples as real course screens confirm or correct the details.
+
+## Files
+
+### 1️⃣ `1_context_window_growth.py` — Watch the Context Window Fill Up
+**What:** Runs a real multi-step tool-use loop (a "search the logs" task across several chunks) and prints `input_tokens` after every turn.
+
+**Key concepts:**
+- Every tool_result is appended to `messages` and resent in full on every later API call
+- Nothing is dropped automatically — token growth is cumulative, not per-turn
+- Live result: input_tokens climbed 615 → 18,617 across 5 turns with ~200-line fake log chunks
+
+```bash
+uv run 06-context-engineering/1_context_window_growth.py
+```
+
+### 2️⃣ `2_compaction.py` — Summarize Before It Persists
+**What:** Same task as example 1, but each tool_result is replaced with a short summary (the one fact the task needs) before being added to history, instead of the raw payload.
+
+**Key concepts:**
+- Compaction: decide what a tool_result reduces to *before* it enters context, not after the window is already full
+- Live result: same task, same number of tool calls — input_tokens ended at 979 instead of 18,617
+- The tradeoff: a summary is only safe if later steps never need what it threw away — compaction is a deliberate choice about what's safe to drop, not a free win
+
+```bash
+uv run 06-context-engineering/2_compaction.py
+```
+
+## Running All Examples
+
+```bash
+uv run 06-context-engineering/1_context_window_growth.py
+uv run 06-context-engineering/2_compaction.py
+```
