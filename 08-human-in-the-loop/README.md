@@ -17,3 +17,16 @@
 ```bash
 uv run 08-human-in-the-loop/1_approval_gate.py
 ```
+
+### 2️⃣ `2_hitl_insertion_points.py` — Beyond "Before a Destructive Call"
+**What:** A refund-investigation agent exercising two more HITL insertion points: a plan review right after Claude proposes a plan (before any tool executes), and an unexpected-output check when a tool returns a refund amount wildly outside a sane bound.
+
+**Key concepts:**
+- After-planning check: catches a wrong plan before any step executes, even if every step would run correctly
+- On-unexpected-output check: validates a tool result against a sanity bound before letting the agent act on it — a retry alone wouldn't have caught it, since the bad value would just come back again
+- Live run: both checkpoints fired exactly as designed — the plan was shown before execution, and a $48,000 refund amount (vs. a $500 bound) was flagged before being issued
+- Both checks live in application code around tool execution, not in a system-prompt instruction — the model can't guarantee its own output; your code can check it
+
+```bash
+uv run 08-human-in-the-loop/2_hitl_insertion_points.py
+```

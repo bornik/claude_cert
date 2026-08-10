@@ -212,6 +212,8 @@ Details: see [`06-context-engineering/README.md`](06-context-engineering/README.
 
 ```bash
 uv run 07-agent-architecture/1_workflow_vs_agent.py  # fixed workflow vs. Claude-driven agent loop
+uv run 07-agent-architecture/2_over_tooling.py       # tool selection quality vs. tool surface size
+uv run 07-agent-architecture/3_exit_conditions.py    # relying on Claude to stop vs. a designed exit condition
 ```
 
 Details: see [`07-agent-architecture/README.md`](07-agent-architecture/README.md).
@@ -219,7 +221,8 @@ Details: see [`07-agent-architecture/README.md`](07-agent-architecture/README.md
 ### Module 08 — Human-in-the-Loop ⚠️ *unverified course structure*
 
 ```bash
-uv run 08-human-in-the-loop/1_approval_gate.py  # dangerous tool calls pause for approval
+uv run 08-human-in-the-loop/1_approval_gate.py         # dangerous tool calls pause for approval
+uv run 08-human-in-the-loop/2_hitl_insertion_points.py # plan review + unexpected-output checkpoints
 ```
 
 Details: see [`08-human-in-the-loop/README.md`](08-human-in-the-loop/README.md).
