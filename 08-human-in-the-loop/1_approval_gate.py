@@ -8,8 +8,9 @@ before your code actually runs them.
 
 This example marks tools as "safe" or "dangerous" up front. Safe tools
 execute immediately. Dangerous tools stop the loop, print exactly what
-Claude wants to do, and wait for a (simulated) human decision before
-either executing it or telling Claude the human declined.
+Claude wants to do, and wait for YOU to type y/n at the prompt before
+either executing it or telling Claude the human declined — this is a
+real approval gate, not a simulated one.
 """
 
 import sys
@@ -58,14 +59,20 @@ def execute_tool(name, tool_input):
 
 
 def ask_human_to_approve(tool_use):
-    """Simulated human approval gate. In a real system this would block on
-    a UI confirmation, a Slack approval, or a CLI prompt — not auto-approve."""
+    """A REAL approval gate — blocks on a CLI prompt. In production this
+    would block on a UI confirmation or a Slack approval instead, but the
+    principle is identical: execution waits for an actual human decision."""
     print(f"\n🛑 APPROVAL REQUIRED: Claude wants to call {tool_use.name}({tool_use.input})")
     print("   This action is irreversible.")
-    # Simulated decision — swap this for `input(...)` to make it interactive.
-    decision = "approved"
-    print(f"   Human decision (simulated): {decision}")
-    return decision == "approved"
+    try:
+        decision = input("   Approve? [y/N]: ").strip().lower()
+    except EOFError:
+        # No interactive terminal attached — fail safe, don't silently approve.
+        print("   (no input available — defaulting to decline)")
+        decision = "n"
+    approved = decision == "y"
+    print(f"   Human decision: {'approved' if approved else 'declined'}")
+    return approved
 
 
 def run_loop(user_request):

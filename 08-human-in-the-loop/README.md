@@ -5,11 +5,13 @@
 ## Files
 
 ### 1️⃣ `1_approval_gate.py` — Pausing Before an Irreversible Action
-**What:** A tool-use loop where most tools auto-execute, but tools marked dangerous (here, `delete_account`) stop and wait for a human decision before your code runs them — not just before telling the user about it.
+**What:** A tool-use loop where most tools auto-execute, but tools marked dangerous (here, `delete_account`) stop and wait for a **real** `y/n` prompt at your terminal before your code runs them — not just before telling the user about it.
 
 **Key concepts:**
 - The gate is a single `if tool_use.name in DANGEROUS_TOOLS` check in your application code — Claude can still *ask* for the action, but cannot cause it
+- The approval prompt is a genuine `input()` call — try running it and typing `n` to see the decline path, or `y` to see it execute
 - If declined, Claude is told the human declined (as a `tool_result`), not given a fake success — it reasons from there
+- No terminal input available (e.g. piped/non-interactive) → fails safe to decline, never silently approves
 - Live run: Claude called `get_account_status` freely, but `delete_account` stopped for approval before executing
 
 **When to use:** Any tool whose effect is destructive, hard to reverse, or costly if wrong (deletes, refunds, external emails, financial transactions)
@@ -24,6 +26,7 @@ uv run 08-human-in-the-loop/1_approval_gate.py
 **Key concepts:**
 - After-planning check: catches a wrong plan before any step executes, even if every step would run correctly
 - On-unexpected-output check: validates a tool result against a sanity bound before letting the agent act on it — a retry alone wouldn't have caught it, since the bad value would just come back again
+- Both checkpoints are real `input()` prompts — try approving the plan but declining the oversized refund to see Claude report it as pending manual review instead of falsely claiming success
 - Live run: both checkpoints fired exactly as designed — the plan was shown before execution, and a $48,000 refund amount (vs. a $500 bound) was flagged before being issued
 - Both checks live in application code around tool execution, not in a system-prompt instruction — the model can't guarantee its own output; your code can check it
 

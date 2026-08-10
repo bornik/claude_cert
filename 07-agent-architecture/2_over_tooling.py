@@ -5,15 +5,27 @@ EXAMPLE 2: Over-Tooling — Does a Bigger Tool Surface Degrade Selection?
 register every tool they might need 'just in case' and discover that
 Claude's selection quality degrades as the tool surface grows."
 
-This tests that claim directly: the same request, sent once against a
-minimal 3-tool set, and once against a bloated 15-tool set where several
-tools have deliberately overlapping, vague descriptions (the kind that
-accumulate when a team keeps adding tools "just in case" without pruning
-or tightening descriptions). We check whether Claude still picks the one
-correct tool once the surface is much larger and noisier.
+A single run against a bloated tool set can luck into the right answer
+even when the tools are genuinely confusing — Claude doesn't have to be
+wrong every time for the tool set to be bad, it just has to be
+INCONSISTENT. So instead of one call per scenario, this sends the SAME
+ambiguous query N times against a minimal tool set and N times against a
+bloated one with several tools sharing near-identical wording, and
+compares the SPREAD of picks. A stable tool set gives the same answer
+every time. A confusing one doesn't — that instability is the failure,
+even on runs where any individual pick looks "reasonable."
+
+Two things are stacked to make confusion likely:
+1. The query itself is genuinely ambiguous between several plausible
+   readings (not just "status" — "what's going on" could mean status,
+   history, timeline, or open tickets).
+2. Several bloated-set tools share nearly word-for-word descriptions,
+   differing only in name — the actual pattern from teams bolting on
+   tools without consolidating overlapping ones.
 """
 
 import sys
+from collections import Counter
 from pathlib import Path
 
 from anthropic import Anthropic
@@ -25,7 +37,11 @@ from common.usage import print_usage
 load_dotenv()
 client = Anthropic()
 
-QUERY = "What is the current status of order ORD-7823?"
+# Deliberately ambiguous — a human support agent would also have to ask
+# a follow-up question here. Several tools below are equally plausible.
+QUERY = "What's going on with order ORD-7823?"
+
+RUNS_PER_SCENARIO = 6
 
 MINIMAL_TOOLS = [
     {
@@ -57,73 +73,96 @@ MINIMAL_TOOLS = [
     },
 ]
 
-# Same 3 tools, plus 12 more that teams tend to accumulate "just in case" —
-# several with descriptions that overlap heavily with get_order_status,
-# the correct tool for this query.
+# Same base tool, but here it has FOUR near-clones with virtually the same
+# description ("current information/status about an order"), plus other
+# plausible reads of "what's going on" (timeline, tickets, tracking).
+# This is what "just add a tool, don't consolidate" produces in practice.
 BLOATED_TOOLS = MINIMAL_TOOLS + [
-    {"name": "get_order_details", "description": "Get information about an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_order_history", "description": "Get information about a customer's past orders.", "input_schema": {"type": "object", "properties": {"customer_id": {"type": "string"}}, "required": ["customer_id"]}},
-    {"name": "track_shipment", "description": "Get information about a shipment.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_order_timeline", "description": "Get information about the timeline of an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "check_order", "description": "Check on an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_order_details", "description": "Get current information about an order by order ID.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "check_order", "description": "Get current information about an order by order ID.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_order_info", "description": "Get current status information about an order by order ID.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "order_lookup", "description": "Get current status information for an order by order ID.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "track_shipment", "description": "Get shipment tracking information for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_order_timeline", "description": "Get the event timeline for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_support_tickets", "description": "Get open support tickets related to an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_order_history", "description": "Get a customer's past order history.", "input_schema": {"type": "object", "properties": {"customer_id": {"type": "string"}}, "required": ["customer_id"]}},
     {"name": "get_invoice", "description": "Get the invoice for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_return_status", "description": "Get information about a return.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_refund_status", "description": "Get information about a refund.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_warehouse_info", "description": "Get information about warehouse inventory for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_delivery_estimate", "description": "Get information about when an order will arrive.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_payment_status", "description": "Get information about payment for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
-    {"name": "get_support_tickets", "description": "Get information about support tickets for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_return_status", "description": "Get return status for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_refund_status", "description": "Get refund status for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
+    {"name": "get_delivery_estimate", "description": "Get the delivery estimate for an order.", "input_schema": {"type": "object", "properties": {"order_id": {"type": "string"}}, "required": ["order_id"]}},
 ]
 
 
-def ask(tools, label):
-    response = client.messages.create(
-        model="claude-haiku-4-5",
-        max_tokens=200,
-        tools=tools,
-        tool_choice={"type": "any"},
-        messages=[{"role": "user", "content": QUERY}],
-    )
-    print_usage(response)
-    tool_use = next((b for b in response.content if b.type == "tool_use"), None)
-    picked = tool_use.name if tool_use else "(no tool called)"
-    print(f"{label} ({len(tools)} tools): Claude picked → {picked}")
-    return picked
+def sample_picks(tools, label):
+    picks = []
+    for i in range(1, RUNS_PER_SCENARIO + 1):
+        response = client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=200,
+            tools=tools,
+            tool_choice={"type": "any"},
+            messages=[{"role": "user", "content": QUERY}],
+        )
+        print_usage(response)
+        tool_use = next((b for b in response.content if b.type == "tool_use"), None)
+        picked = tool_use.name if tool_use else "(no tool called)"
+        picks.append(picked)
+        print(f"  Run {i}/{RUNS_PER_SCENARIO}: {picked}")
+
+    counts = Counter(picks)
+    print(f"\n{label} ({len(tools)} tools) — distribution across {RUNS_PER_SCENARIO} runs: {dict(counts)}")
+    return counts
 
 
 def main():
     print("\n" + "=" * 70)
-    print("EXAMPLE 2: Over-Tooling — Selection Quality vs. Tool Surface Size")
+    print("EXAMPLE 2: Over-Tooling — Consistency vs. Tool Surface Size")
     print("=" * 70)
-    print(f"\nQuery: {QUERY!r}")
-    print("Correct tool: get_order_status\n")
+    print(f"\nAmbiguous query: {QUERY!r}")
+    print(f"Running it {RUNS_PER_SCENARIO} times against each tool set to check for CONSISTENCY,")
+    print("not just a single pick — a bad tool set shows up as instability across identical calls.\n")
 
-    minimal_pick = ask(MINIMAL_TOOLS, "Minimal set")
-    bloated_pick = ask(BLOATED_TOOLS, "Bloated set")
+    print("--- Minimal set (3 tools) ---")
+    minimal_counts = sample_picks(MINIMAL_TOOLS, "Minimal set")
 
-    print(f"""
-📝 Result: minimal set picked {minimal_pick!r}, bloated set picked {bloated_pick!r}.
+    print("\n--- Bloated set (15 tools, several near-duplicate) ---")
+    bloated_counts = sample_picks(BLOATED_TOOLS, "Bloated set")
+
+    print("\n" + "=" * 70)
+    print("RESULT")
+    print("=" * 70)
+    print(f"Minimal set distribution: {dict(minimal_counts)} ({len(minimal_counts)} distinct tool(s) picked)")
+    print(f"Bloated set distribution: {dict(bloated_counts)} ({len(bloated_counts)} distinct tool(s) picked)")
+
+    if len(bloated_counts) > len(minimal_counts):
+        print("""
+Reproduced the claim: the minimal set answered the SAME ambiguous query
+consistently, while the bloated set's answer varied run to run. That
+instability — not a single "wrong" pick — is what over-tooling actually
+looks like in production: the same user question routes to a different
+tool depending on nothing you control, because several tools are
+equally plausible matches for the model to reach for.
 """)
-    if minimal_pick == "get_order_status" and bloated_pick != "get_order_status":
-        print("Reproduced the claim: same query, correct pick shrinks once 12 overlapping,")
-        print("vaguely-described tools are added to the surface.")
-    elif minimal_pick == bloated_pick == "get_order_status":
-        print("Both picked correctly on this run. claude-haiku-4-5 handled 15 tools fine")
-        print("here — this doesn't disprove the claim, it means this particular set of")
-        print("overlapping descriptions and this model weren't enough to break it. Try a")
-        print("more ambiguous query, more tools, or near-duplicate names to push further.")
+    elif len(bloated_counts) == 1:
+        print("""
+Both sets were consistent on this run — the bloated set's near-duplicate
+tools weren't enough to destabilize claude-haiku-4-5 this time. This
+doesn't disprove the mechanism: try more near-duplicate tools, more
+overlapping names, or a real production tool count (30-50+) to push it
+further. Confusion is a matter of degree, not a guaranteed per-run failure.
+""")
     else:
-        print("Unexpected pattern — inspect both picks above.")
+        print("\nUnexpected pattern — inspect the per-run picks above.")
 
     print("""
-This is exactly the mechanism the lesson describes: teams register tools
-"just in case" without pruning, descriptions drift into near-duplicates
-(get_order_details vs track_shipment vs check_order — all plausible for
-this query), and the model has more plausible-looking but wrong options
-to choose between. The fix isn't a smarter model — it's discipline:
-start with the minimum tool set the task needs, add a tool only when a
-specific capability gap is confirmed, and prune or merge overlapping
-tools rather than letting them accumulate.
+This is the mechanism the lesson describes: teams register tools "just
+in case" without consolidating, several end up with near-identical
+descriptions, and the model has more equally-plausible-looking options
+to pick between — so its choice becomes less a function of the query and
+more a function of noise in a growing tool list. The fix isn't a smarter
+model — it's discipline: start with the minimum tool set the task needs,
+add a tool only when a specific capability gap is confirmed, and merge
+or prune tools whose descriptions overlap rather than letting them pile up.
 """)
 
 

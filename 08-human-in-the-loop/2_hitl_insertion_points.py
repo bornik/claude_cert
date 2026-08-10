@@ -67,13 +67,22 @@ UNEXPECTED_REFUND_AMOUNT = 48000.00
 REASONABLE_UPPER_BOUND = 500.00
 
 
+def ask_human(prompt):
+    try:
+        decision = input(f"   {prompt} [y/N]: ").strip().lower()
+    except EOFError:
+        print("   (no input available — defaulting to decline)")
+        decision = "n"
+    return decision == "y"
+
+
 def approve_plan(steps):
     """Insertion point: after a planning step, before execution begins."""
     print("\n🛑 PLAN REVIEW (before any tool executes):")
     for i, step in enumerate(steps, 1):
         print(f"   {i}. {step}")
-    approved = True  # simulated human decision — swap for input() to make interactive
-    print(f"   Human decision (simulated): {'approved' if approved else 'rejected'}")
+    approved = ask_human("Approve this plan?")
+    print(f"   Human decision: {'approved' if approved else 'rejected'}")
     return approved
 
 
@@ -82,8 +91,8 @@ def flag_unexpected_output(order_id, amount):
     if amount > REASONABLE_UPPER_BOUND:
         print(f"\n🛑 UNEXPECTED OUTPUT: refund amount ${amount:.2f} for {order_id} exceeds "
               f"the ${REASONABLE_UPPER_BOUND:.2f} sanity bound for this account tier.")
-        approved = True  # simulated — a real system would route this to a person
-        print(f"   Human decision (simulated): {'approve anyway' if approved else 'block'}")
+        approved = ask_human("Approve this refund anyway?")
+        print(f"   Human decision: {'approve anyway' if approved else 'block'}")
         return approved
     return True  # within bounds, no human check needed
 

@@ -18,11 +18,11 @@ uv run 07-agent-architecture/1_workflow_vs_agent.py
 ```
 
 ### 2️⃣ `2_over_tooling.py` — Does a Bigger Tool Surface Degrade Selection?
-**What:** The same query sent against a minimal 3-tool set and a bloated 15-tool set with several deliberately overlapping, vague descriptions (`get_order_details` vs `track_shipment` vs `check_order` — all plausible near-duplicates of the correct tool).
+**What:** A deliberately ambiguous query ("What's going on with order ORD-7823?") sent 6 times each against a minimal 3-tool set and a bloated 15-tool set with several near-identical descriptions — comparing the *spread* of picks, not just one call, since a bad tool set shows up as inconsistency rather than being wrong every single time.
 
 **Key concepts:**
-- "Over-tooling is the more common problem in production agents" — teams register tools "just in case" without pruning
-- Tested live: on this run `claude-haiku-4-5` picked correctly even at 15 tools — the script explains why that doesn't disprove the mechanism and how to push the example further toward failure
+- "Over-tooling is the more common problem in production agents" — teams register tools "just in case" without consolidating overlapping ones
+- Live result: the minimal set picked `get_order_status` all 6/6 times; the bloated set split across 3 different tools (`get_order_details`, `get_order_info`, `order_lookup`) for the exact same query — reproduced live, not simulated
 - The fix is discipline (minimum viable tool set, prune/merge overlaps), not a smarter model
 
 ```bash
