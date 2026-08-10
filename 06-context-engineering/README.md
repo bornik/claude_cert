@@ -2,7 +2,6 @@
 
 Every `tool_result` Claude gets back is appended to the context window and stays there for the rest of the session — it's never dropped automatically. In a single-turn prompt this is invisible. In a multi-step agent session running many tool calls, the window fills up fast, and once it fills, the agent either compacts (loses detail) or stalls before the task is done.
 
-**Note:** this module's structure is reconstructed from general course-page/documentation descriptions, not a verified screen-by-screen syllabus. Update these examples as real course screens confirm or correct the details.
 
 ## Files
 

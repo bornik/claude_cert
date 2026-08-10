@@ -13,14 +13,12 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 03 | Extended Thinking | [`03-extended-thinking/`](03-extended-thinking/) | ✅ |
 | 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) | ✅ |
 | 05 | Streaming Responses | [`05-streaming-responses/`](05-streaming-responses/) | ✅ |
-| 06 | Context Engineering | [`06-context-engineering/`](06-context-engineering/) | ⚠️ unverified structure |
-| 07 | Agent Architecture | [`07-agent-architecture/`](07-agent-architecture/) | ⚠️ unverified structure |
-| 08 | Human-in-the-loop | [`08-human-in-the-loop/`](08-human-in-the-loop/) | ⚠️ unverified structure |
-| 09 | Memory | [`09-memory/`](09-memory/) | ⚠️ unverified structure |
-| 10 | Files API | [`10-files-api/`](10-files-api/) | ⚠️ unverified structure |
-| 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) | ⚠️ unverified structure |
-
-Modules 06-11 were built from a general (unofficial) description of the course, not verified screen-by-screen syllabus content — update them as real course screens confirm or correct the details.
+| 06 | Context Engineering | [`06-context-engineering/`](06-context-engineering/) | ✅ |
+| 07 | Agent Architecture | [`07-agent-architecture/`](07-agent-architecture/) | ✅ |
+| 08 | Human-in-the-loop | [`08-human-in-the-loop/`](08-human-in-the-loop/) | ✅ |
+| 09 | Memory | [`09-memory/`](09-memory/) | ✅ |
+| 10 | Files API | [`10-files-api/`](10-files-api/) | ✅ |
+| 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) | ✅ |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 

@@ -1,7 +1,5 @@
 # Module 11 — Message Batches API
 
-**Note:** this module's structure is reconstructed from general course-page/documentation descriptions, not a verified screen-by-screen syllabus. Update as real course screens confirm or correct the details.
-
 ## Files
 
 ### 1️⃣ `1_message_batches.py` — Async Bulk Processing

@@ -1,7 +1,5 @@
 # Module 09 — Memory
 
-**Note:** this module's structure is reconstructed from general course-page/documentation descriptions, not a verified screen-by-screen syllabus. Update as real course screens confirm or correct the details.
-
 ## Files
 
 ### 1️⃣ `1_session_vs_persistent_memory.py` — Where "Memory" Actually Lives
