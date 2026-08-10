@@ -6,19 +6,19 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 
 ## 📖 Course Map
 
-| Module | Course Section | Folder | Status |
-|---|---|---|---|
-| 01 | MSO Foundations *(separate course track)* | [`01-mso-foundations/`](01-mso-foundations/) | ✅ |
-| 02 | Prompting Craft | [`02-prompting-craft/`](02-prompting-craft/) | ✅ |
-| 03 | Extended Thinking | [`03-extended-thinking/`](03-extended-thinking/) | ✅ |
-| 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) | ✅ |
-| 05 | Streaming Responses | [`05-streaming-responses/`](05-streaming-responses/) | ✅ |
-| 06 | Context Engineering | [`06-context-engineering/`](06-context-engineering/) | ✅ |
-| 07 | Agent Architecture | [`07-agent-architecture/`](07-agent-architecture/) | ✅ |
-| 08 | Human-in-the-loop | [`08-human-in-the-loop/`](08-human-in-the-loop/) | ✅ |
-| 09 | Memory | [`09-memory/`](09-memory/) | ✅ |
-| 10 | Files API | [`10-files-api/`](10-files-api/) | ✅ |
-| 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) | ✅ |
+| Module | Course Section | Folder |
+|---|---|---|
+| 01 | MSO Foundations *(separate course track)* | [`01-mso-foundations/`](01-mso-foundations/) |
+| 02 | Prompting Craft | [`02-prompting-craft/`](02-prompting-craft/) |
+| 03 | Extended Thinking | [`03-extended-thinking/`](03-extended-thinking/) |
+| 04 | Tool-use and Schema Design | [`04-tool-use-schema-design/`](04-tool-use-schema-design/) |
+| 05 | Streaming Responses | [`05-streaming-responses/`](05-streaming-responses/) |
+| 06 | Context Engineering | [`06-context-engineering/`](06-context-engineering/) |
+| 07 | Agent Architecture | [`07-agent-architecture/`](07-agent-architecture/) |
+| 08 | Human-in-the-loop | [`08-human-in-the-loop/`](08-human-in-the-loop/) |
+| 09 | Memory | [`09-memory/`](09-memory/) |
+| 10 | Files API | [`10-files-api/`](10-files-api/) |
+| 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -64,24 +64,28 @@ claude-cert/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
 │   └── 2_streaming_with_progress.py
-├── 06-context-engineering/       ⚠️ unverified course structure
+├── 06-context-engineering/
 │   ├── README.md
 │   ├── 1_context_window_growth.py
-│   └── 2_compaction.py
-├── 07-agent-architecture/        ⚠️ unverified course structure
+│   ├── 2_compaction.py
+│   └── 3_context_failure_diagnosis.py
+├── 07-agent-architecture/
 │   ├── README.md
-│   └── 1_workflow_vs_agent.py
-├── 08-human-in-the-loop/         ⚠️ unverified course structure
+│   ├── 1_workflow_vs_agent.py
+│   ├── 2_over_tooling.py
+│   └── 3_exit_conditions.py
+├── 08-human-in-the-loop/
 │   ├── README.md
-│   └── 1_approval_gate.py
-├── 09-memory/                    ⚠️ unverified course structure
+│   ├── 1_approval_gate.py
+│   └── 2_hitl_insertion_points.py
+├── 09-memory/
 │   ├── README.md
 │   └── 1_session_vs_persistent_memory.py
-├── 10-files-api/                 ⚠️ unverified course structure
+├── 10-files-api/
 │   ├── README.md
 │   ├── sample.txt
 │   └── 1_files_api_basics.py
-├── 11-message-batches/           ⚠️ unverified course structure
+├── 11-message-batches/
 │   ├── README.md
 │   └── 1_message_batches.py
 ├── common/
@@ -114,8 +118,8 @@ You don't need to separately install Python — `uv` will download and manage th
 
 ### 3. Get the project and install dependencies
 ```bash
-git clone <this-repo-url>
-cd "claude cert"
+git clone git@github.com:bornik/claude_cert.git
+cd claude_cert
 uv sync
 ```
 `uv sync` reads `pyproject.toml` / `uv.lock`, installs Python 3.11 if missing, and creates an isolated virtual environment with the `anthropic` SDK etc. — no manual `venv` steps needed.
@@ -196,7 +200,7 @@ uv run 05-streaming-responses/2_streaming_with_progress.py   # raw events + toke
 
 Details: see [`05-streaming-responses/README.md`](05-streaming-responses/README.md).
 
-### Module 06 — Context Engineering ⚠️ *unverified course structure*
+### Module 06 — Context Engineering
 
 ```bash
 uv run 06-context-engineering/1_context_window_growth.py     # watch input_tokens climb turn over turn
@@ -206,7 +210,7 @@ uv run 06-context-engineering/3_context_failure_diagnosis.py  # checkpoint 5: de
 
 Details: see [`06-context-engineering/README.md`](06-context-engineering/README.md).
 
-### Module 07 — Agent Architecture ⚠️ *unverified course structure*
+### Module 07 — Agent Architecture
 
 ```bash
 uv run 07-agent-architecture/1_workflow_vs_agent.py  # fixed workflow vs. Claude-driven agent loop
@@ -216,7 +220,7 @@ uv run 07-agent-architecture/3_exit_conditions.py    # relying on Claude to stop
 
 Details: see [`07-agent-architecture/README.md`](07-agent-architecture/README.md).
 
-### Module 08 — Human-in-the-Loop ⚠️ *unverified course structure*
+### Module 08 — Human-in-the-Loop
 
 ```bash
 uv run 08-human-in-the-loop/1_approval_gate.py         # dangerous tool calls pause for approval
@@ -225,7 +229,7 @@ uv run 08-human-in-the-loop/2_hitl_insertion_points.py # plan review + unexpecte
 
 Details: see [`08-human-in-the-loop/README.md`](08-human-in-the-loop/README.md).
 
-### Module 09 — Memory ⚠️ *unverified course structure*
+### Module 09 — Memory
 
 ```bash
 uv run 09-memory/1_session_vs_persistent_memory.py  # session memory vs. file-backed persistent memory
@@ -233,7 +237,7 @@ uv run 09-memory/1_session_vs_persistent_memory.py  # session memory vs. file-ba
 
 Details: see [`09-memory/README.md`](09-memory/README.md).
 
-### Module 10 — Files API ⚠️ *unverified course structure*
+### Module 10 — Files API
 
 ```bash
 uv run 10-files-api/1_files_api_basics.py  # upload once, reference by file_id across requests
@@ -241,7 +245,7 @@ uv run 10-files-api/1_files_api_basics.py  # upload once, reference by file_id a
 
 Details: see [`10-files-api/README.md`](10-files-api/README.md).
 
-### Module 11 — Message Batches API ⚠️ *unverified course structure*
+### Module 11 — Message Batches API
 
 ```bash
 uv run 11-message-batches/1_message_batches.py  # submit, poll, and retrieve an async batch
