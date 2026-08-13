@@ -146,6 +146,24 @@ uv run 04-tool-use-schema-design/8_id_mismatch_bug.py
 
 ---
 
+### 9️⃣ `9_agent_sdk_builtin_loop.py` — The Same Loop, Built Into the Agent SDK
+
+**What:** The exact weather/Paris scenario from `1_simple_loop.py`, run again — but through the **Claude Agent SDK** (`claude-agent-sdk`, a different package from `anthropic`). One `query()` call replaces the entire manual `while response.stop_reason == "tool_use"` loop: the SDK calls the tool, feeds the result back, and keeps going until Claude is done.
+
+**Key concepts:**
+- Not the same package as everything else in this repo — spawns the `claude` CLI as a subprocess, so it needs that CLI installed, not just `ANTHROPIC_API_KEY`
+- Left at its defaults it registers Claude Code's own built-in tools (Bash, Read, Edit, ...) into every call and can pick up this machine's own default model — this script explicitly passes `tools=[]` and `model=` to keep the comparison fair and the cost predictable
+- The tradeoff is the same "workflow vs. agent" one from Module 07, just one level lower: Example 1 gives full visibility/control over every tool-use turn (useful for approval gates, custom retries, logging); the Agent SDK trades that control for not having to write or maintain the loop yourself
+- Tools are registered as real async Python functions (`@tool` + `create_sdk_mcp_server`), not a JSON schema plus an `if/elif` dispatching on `tool_use_block.name`
+
+**When to use:** After `1_simple_loop.py`, once you understand the manual loop and want to see what a purpose-built SDK does instead of hand-rolling it
+
+```bash
+uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py
+```
+
+---
+
 ## Recommended Learning Path
 
 1. **Start:** `1_simple_loop.py` — understand the loop
@@ -155,7 +173,8 @@ uv run 04-tool-use-schema-design/8_id_mismatch_bug.py
 5. **Then:** `4_ticket_escalation.py` — real-world flow
 6. **Then:** `5_error_handling.py` — production robustness
 7. **Then:** `7_mcp_connector.py` — see the alternative to writing schemas yourself
-8. **Finally:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
+8. **Then:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
+9. **Finally:** `9_agent_sdk_builtin_loop.py` — see the SAME loop run by a purpose-built SDK instead of your own code
 
 ---
 
@@ -171,6 +190,7 @@ uv run 04-tool-use-schema-design/5_error_handling.py
 uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 uv run 04-tool-use-schema-design/7_mcp_connector.py  # expensive (~165k input tokens) — don't loop this one
 uv run 04-tool-use-schema-design/8_id_mismatch_bug.py  # triggers and fixes a real tool_use_id mismatch error
+uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py  # needs the `claude` CLI installed, not just ANTHROPIC_API_KEY
 ```
 
 ---

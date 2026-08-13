@@ -59,7 +59,8 @@ claude-cert/
 │   ├── 5_error_handling.py
 │   ├── 6_boundary_case_failure.py
 │   ├── 7_mcp_connector.py       ← MCP as an alternative to manual schemas
-│   └── 8_id_mismatch_bug.py     ← reproduces + fixes a real tool_use_id mismatch error
+│   ├── 8_id_mismatch_bug.py     ← reproduces + fixes a real tool_use_id mismatch error
+│   └── 9_agent_sdk_builtin_loop.py  ← same loop as #1, driven by claude-agent-sdk instead of manual code
 ├── 05-streaming-responses/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
@@ -80,7 +81,9 @@ claude-cert/
 │   └── 2_hitl_insertion_points.py
 ├── 09-memory/
 │   ├── README.md
-│   └── 1_session_vs_persistent_memory.py
+│   ├── 1_session_vs_persistent_memory.py
+│   ├── 2_memory_scope_comparison.py
+│   └── 3_skills_on_demand_vs_always_on.py
 ├── 10-files-api/
 │   ├── README.md
 │   ├── sample.txt
@@ -142,6 +145,16 @@ uv run 02-prompting-craft/process_ticket.py
 ```
 If you see a JSON classification result printed, you're set up correctly.
 
+### 7. (Optional) Install the Claude Code CLI for the Agent SDK example
+Every script above uses the `anthropic` package directly. One exception —
+`04-tool-use-schema-design/9_agent_sdk_builtin_loop.py` — uses the separate
+`claude-agent-sdk` package, which spawns the `claude` CLI as a subprocess.
+It needs the CLI installed in addition to your `.env` API key:
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+Skip this if you don't plan to run that one script — nothing else in the repo needs it.
+
 ---
 
 ## 📚 Usage
@@ -178,6 +191,7 @@ uv run 04-tool-use-schema-design/5_error_handling.py     # handling tool failure
 uv run 04-tool-use-schema-design/6_boundary_case_failure.py  # named failure mode: overlapping descriptions at a boundary
 uv run 04-tool-use-schema-design/7_mcp_connector.py      # MCP Connector — schemas written by someone else (expensive, don't loop)
 uv run 04-tool-use-schema-design/8_id_mismatch_bug.py    # triggers + fixes a real mismatched tool_use_id error
+uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py  # claude-agent-sdk's built-in loop vs. #1's manual loop — needs the `claude` CLI installed too
 ```
 
 Details per example: see [`04-tool-use-schema-design/README.md`](04-tool-use-schema-design/README.md).
@@ -232,7 +246,9 @@ Details: see [`08-human-in-the-loop/README.md`](08-human-in-the-loop/README.md).
 ### Module 09 — Memory
 
 ```bash
-uv run 09-memory/1_session_vs_persistent_memory.py  # session memory vs. file-backed persistent memory
+uv run 09-memory/1_session_vs_persistent_memory.py     # session memory vs. file-backed persistent memory
+uv run 09-memory/2_memory_scope_comparison.py          # matching use case to memory scope, token growth measured live
+uv run 09-memory/3_skills_on_demand_vs_always_on.py    # on-demand Skill loading vs. always-on CLAUDE.md-style instructions
 ```
 
 Details: see [`09-memory/README.md`](09-memory/README.md).
