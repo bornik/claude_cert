@@ -15,6 +15,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from anthropic.types import ToolResultBlockParam
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common.usage import print_usage
@@ -98,10 +99,11 @@ def main():
 
     # Send ALL results back in one message (not sequential!)
     messages.append({"role": "assistant", "content": response.content})
-    messages.append({
-        "role": "user",
-        "content": results  # ← All results at once
-    })
+    tool_results: list[ToolResultBlockParam] = [
+        ToolResultBlockParam(type="tool_result", tool_use_id=result["tool_use_id"], content=result["content"])
+        for result in results
+    ]
+    messages.append({"role": "user", "content": tool_results})
 
     print(f"\n✓ Returning {len(results)} results in one message")
 
@@ -114,7 +116,7 @@ def main():
     print_usage(response)
 
     final_text = next(
-        (block.text for block in response.content if hasattr(block, "text")),
+        (block.text for block in response.content if hasattr(block, "text") and isinstance(block.text, str)),
         "No response"
     )
     print(f"\n✅ Claude's response:\n   {final_text}")

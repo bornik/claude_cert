@@ -19,6 +19,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 09 | Memory | [`09-memory/`](09-memory/) |
 | 10 | Files API | [`10-files-api/`](10-files-api/) |
 | 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) |
+| 12 | Managed Agents | [`12-managed-agents/`](12-managed-agents/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -52,15 +53,16 @@ claude-cert/
 ├── 04-tool-use-schema-design/
 │   ├── README.md
 │   ├── tool-use-guide.html          ← visual overview, open in browser
+│   ├── 0_structured_output.py       ← response format control (JSON schema)
 │   ├── 1_simple_loop.py
 │   ├── 2_parallel_calls.py
 │   ├── 3_schema_design.py
-│   ├── 4_ticket_escalation.py
+│   ├── 4_ticket_escalation.py       ← real-world: classify then escalate
 │   ├── 5_error_handling.py
 │   ├── 6_boundary_case_failure.py
-│   ├── 7_mcp_connector.py       ← MCP as an alternative to manual schemas
-│   ├── 8_id_mismatch_bug.py     ← reproduces + fixes a real tool_use_id mismatch error
-│   └── 9_agent_sdk_builtin_loop.py  ← same loop as #1, driven by claude-agent-sdk instead of manual code
+│   ├── 7_mcp_connector.py           ← MCP as an alternative to manual schemas
+│   ├── 8_id_mismatch_bug.py         ← reproduces + fixes tool_use_id mismatch error
+│   └── 9_agent_sdk_builtin_loop.py  ← same loop as #1, via claude-agent-sdk
 ├── 05-streaming-responses/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
@@ -91,6 +93,11 @@ claude-cert/
 ├── 11-message-batches/
 │   ├── README.md
 │   └── 1_message_batches.py
+├── 12-managed-agents/
+│   ├── README.md
+│   ├── _setup.py                     ← guarded agent/environment creation, not a runnable example
+│   ├── 1_agent_and_session_basics.py
+│   └── 2_custom_tool_managed_agent.py  ← same weather task as 04-module #1 and #9, a third transport
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
@@ -268,6 +275,17 @@ uv run 11-message-batches/1_message_batches.py  # submit, poll, and retrieve an 
 ```
 
 Details: see [`11-message-batches/README.md`](11-message-batches/README.md).
+
+### Module 12 — Managed Agents
+
+```bash
+uv run 12-managed-agents/1_agent_and_session_basics.py     # agent (once) -> session (every run); bash runs in Anthropic's sandbox
+uv run 12-managed-agents/2_custom_tool_managed_agent.py     # same weather task, third transport: session events instead of tool_use blocks
+```
+
+Requires Managed Agents beta access on your workspace — both scripts catch a 403/404 and print a note if it isn't enabled yet. Each session provisions a real sandbox container, so these take longer and cost a bit more than the other examples in this repo.
+
+Details: see [`12-managed-agents/README.md`](12-managed-agents/README.md).
 
 ---
 

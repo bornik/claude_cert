@@ -6,6 +6,22 @@ Each file demonstrates one tool-use concept in isolation.
 
 ## Files
 
+### 0️⃣ `0_structured_output.py` — Structured Output (Response Format Control)
+**What:** Force Claude's response to match a JSON schema you provide
+
+**Key concepts:**
+- `response_format` with `json_schema`
+- Guaranteed output structure
+- Extraction, classification, structured data generation
+
+**When to use:** When you need guaranteed JSON format (before learning about tools)
+
+```bash
+uv run 04-tool-use-schema-design/0_structured_output.py
+```
+
+---
+
 ### 1️⃣ `1_simple_loop.py` — The Basic Pattern
 **What:** Define a tool → Claude calls it → return result → Claude continues
 
@@ -166,15 +182,16 @@ uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py
 
 ## Recommended Learning Path
 
-1. **Start:** `1_simple_loop.py` — understand the loop
-2. **Then:** `2_parallel_calls.py` — see why order matters
-3. **Then:** `3_schema_design.py` — understand tool selection
-4. **Then:** `6_boundary_case_failure.py` — see the boundary-case failure mode live
-5. **Then:** `4_ticket_escalation.py` — real-world flow
-6. **Then:** `5_error_handling.py` — production robustness
-7. **Then:** `7_mcp_connector.py` — see the alternative to writing schemas yourself
-8. **Then:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
-9. **Finally:** `9_agent_sdk_builtin_loop.py` — see the SAME loop run by a purpose-built SDK instead of your own code
+1. **Start:** `0_structured_output.py` — constrain response format (simplest case)
+2. **Then:** `1_simple_loop.py` — understand the tool-use loop
+3. **Then:** `2_parallel_calls.py` — see why order matters (parallel vs sequential)
+4. **Then:** `3_schema_design.py` — understand tool selection and schema quality
+5. **Then:** `6_boundary_case_failure.py` — see the boundary-case failure mode live
+6. **Then:** `4_ticket_escalation.py` — real-world flow (dependent tool calls)
+7. **Then:** `5_error_handling.py` — production robustness (error handling)
+8. **Then:** `7_mcp_connector.py` — see the alternative to writing schemas yourself (MCP)
+9. **Then:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
+10. **Finally:** `9_agent_sdk_builtin_loop.py` — see the loop run by a purpose-built SDK
 
 ---
 
@@ -182,6 +199,7 @@ uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py
 
 ```bash
 # Run each individually
+uv run 04-tool-use-schema-design/0_structured_output.py
 uv run 04-tool-use-schema-design/1_simple_loop.py
 uv run 04-tool-use-schema-design/2_parallel_calls.py
 uv run 04-tool-use-schema-design/3_schema_design.py

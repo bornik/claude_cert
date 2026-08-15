@@ -20,6 +20,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from anthropic.types import ToolResultBlockParam
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common.usage import print_usage
@@ -149,16 +150,10 @@ def process_ticket(ticket, tools):
 
         # Send result back
         messages.append({"role": "assistant", "content": response.content})
-        messages.append({
-            "role": "user",
-            "content": [
-                {
-                    "type": "tool_result",
-                    "tool_use_id": tool.id,
-                    "content": result
-                }
-            ]
-        })
+        tool_results: list[ToolResultBlockParam] = [
+            ToolResultBlockParam(type="tool_result", tool_use_id=tool.id, content=result)
+        ]
+        messages.append({"role": "user", "content": tool_results})
 
         # Continue
         response = client.messages.create(

@@ -18,6 +18,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from anthropic.types import ToolResultBlockParam
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common.usage import print_usage
@@ -129,17 +130,10 @@ def scenario_error(tools):
 
         # IMPORTANT: Mark as error!
         messages.append({"role": "assistant", "content": response.content})
-        messages.append({
-            "role": "user",
-            "content": [
-                {
-                    "type": "tool_result",
-                    "tool_use_id": tool.id,
-                    "content": error_message,
-                    "is_error": True  # ← This is the key!
-                }
-            ]
-        })
+        tool_results: list[ToolResultBlockParam] = [
+            ToolResultBlockParam(type="tool_result", tool_use_id=tool.id, content=error_message, is_error=True)
+        ]
+        messages.append({"role": "user", "content": tool_results})
 
         print(f"\n✓ Sent error result with is_error=True")
 
@@ -210,17 +204,10 @@ def scenario_error_with_retry(tools):
 
         # Send result back
         messages.append({"role": "assistant", "content": response.content})
-        messages.append({
-            "role": "user",
-            "content": [
-                {
-                    "type": "tool_result",
-                    "tool_use_id": tool.id,
-                    "content": result,
-                    "is_error": error  # ← Set to True/False based on result
-                }
-            ]
-        })
+        tool_results: list[ToolResultBlockParam] = [
+            ToolResultBlockParam(type="tool_result", tool_use_id=tool.id, content=result, is_error=error)
+        ]
+        messages.append({"role": "user", "content": tool_results})
 
         response = client.messages.create(
             model="claude-haiku-4-5",

@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 
 from anthropic import Anthropic
+from anthropic.types import ToolResultBlockParam
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -67,19 +68,13 @@ def try_broken_id(response, tool_use):
     print(f"Real id from Turn 2: {tool_use.id!r}")
     print(f"id we're (wrongly) using in the tool_result: {fake_id!r}")
 
+    tool_results: list[ToolResultBlockParam] = [
+        ToolResultBlockParam(type="tool_result", tool_use_id=fake_id, content="Balance: $1,240.18")
+    ]
     messages = [
         {"role": "user", "content": QUESTION},
         {"role": "assistant", "content": response.content},
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "tool_result",
-                    "tool_use_id": fake_id,
-                    "content": "Balance: $1,240.18",
-                }
-            ],
-        },
+        {"role": "user", "content": tool_results},
     ]
 
     try:
@@ -97,19 +92,13 @@ def try_broken_id(response, tool_use):
 def try_fixed_id(response, tool_use):
     """The fix: tool_use_id must match the assistant's tool_use.id exactly."""
     print("\n--- Fixed: tool_result references the REAL tool_use_id ---")
+    tool_results: list[ToolResultBlockParam] = [
+        ToolResultBlockParam(type="tool_result", tool_use_id=tool_use.id, content="Balance: $1,240.18")
+    ]
     messages = [
         {"role": "user", "content": QUESTION},
         {"role": "assistant", "content": response.content},
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "tool_result",
-                    "tool_use_id": tool_use.id,  # matches exactly
-                    "content": "Balance: $1,240.18",
-                }
-            ],
-        },
+        {"role": "user", "content": tool_results},
     ]
 
     final = client.messages.create(

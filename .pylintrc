@@ -1,0 +1,8 @@
+[MASTER]
+disable=
+    C0103,  # invalid-name (module names, variable names)
+    C0413,  # wrong-import-position
+    C0116,  # missing-function-docstring
+    C0114,  # missing-module-docstring
+    C0115,  # missing-class-docstring
+    W0212,  # protected-access

@@ -5,6 +5,6 @@ description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
     "anthropic>=0.120.2",
-    "claude-agent-sdk>=0.2.136",
+    "claude-agent-sdk>=0.2.134",
     "python-dotenv>=1.2.2",
 ]
