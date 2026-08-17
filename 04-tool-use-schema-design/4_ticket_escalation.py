@@ -17,10 +17,11 @@ This is YOUR project's pattern!
 import json
 import sys
 from pathlib import Path
+from typing import cast
 
 from dotenv import load_dotenv
 from anthropic import Anthropic
-from anthropic.types import ToolResultBlockParam
+from anthropic.types import MessageParam, TextBlock, ToolResultBlockParam, ToolUseBlock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common.usage import print_usage
@@ -101,7 +102,7 @@ def process_ticket(ticket, tools):
     print(f"{'='*70}")
     print(f"Text: {ticket['text'][:70]}...")
 
-    messages = [
+    messages: list[MessageParam] = [
         {"role": "user", "content": f"Process this support ticket:\n{ticket['text']}"}
     ]
 
@@ -117,7 +118,7 @@ def process_ticket(ticket, tools):
     step = 1
     while response.stop_reason == "tool_use":
         tool = next(
-            (b for b in response.content if b.type == "tool_use"),
+            (b for b in response.content if isinstance(b, ToolUseBlock)),
             None
         )
 
@@ -128,6 +129,8 @@ def process_ticket(ticket, tools):
         print(f"           Input: {json.dumps(tool.input, indent=12)}")
 
         # Simulate tool execution
+        tool_input = cast(dict, tool.input)
+
         if tool.name == "classify_ticket":
             # Parse the ticket to determine urgency
             urgency = "critical" if "immediately" in ticket['text'] or "production" in ticket['text'].lower() else "medium"
@@ -136,7 +139,7 @@ def process_ticket(ticket, tools):
                 "ticket_id": ticket['id'],
                 "category": category,
                 "urgency": urgency,
-                "summary": tool.input['ticket_text'][:50]
+                "summary": tool_input['ticket_text'][:50]
             })
 
         elif tool.name == "escalate_ticket":
@@ -145,6 +148,9 @@ def process_ticket(ticket, tools):
                 "queue": "urgent",
                 "assigned_to": "senior_support"
             })
+
+        else:
+            result = json.dumps({"error": f"Unknown tool: {tool.name}"})
 
         print(f"           Result: {result}")
 
@@ -167,7 +173,7 @@ def process_ticket(ticket, tools):
 
     # Final response
     final_text = next(
-        (block.text for block in response.content if hasattr(block, "text")),
+        (block.text for block in response.content if isinstance(block, TextBlock)),
         "No response"
     )
     print(f"\n  ✅ Result: {final_text}")

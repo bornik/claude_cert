@@ -38,6 +38,9 @@ def upload_file():
             extra_headers={"anthropic-beta": FILES_BETA},
         )
     print(f"Uploaded: file_id={uploaded.id!r}, filename={uploaded.filename!r}, size={uploaded.size_bytes} bytes")
+    print("(No token usage to report here — file upload/storage is free. The file's")
+    print(" content only gets billed as input tokens when a message references it,")
+    print(" which is why print_usage() only shows up in ask_about_file() below.)")
     return uploaded.id
 
 

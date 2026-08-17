@@ -8,6 +8,7 @@
 **Key concepts:**
 - Requires the `files-api-2025-04-14` beta header
 - `{"type": "document", "source": {"type": "file", "file_id": ...}}` content block references an uploaded file
+- Uploading/storing a file costs nothing in tokens — `files.upload()` isn't a `messages.create()` call, so there's no `usage` to report. Cost only appears once a message *references* the file, which is why `print_usage()` only shows up in `ask_about_file()`, not in the upload step
 - Files persist on Anthropic's side until explicitly deleted (`client.beta.files.delete(file_id)`) — clean up when done
 - The alternative (inlining the document text in every request) re-sends and re-bills those tokens on every single call
 
