@@ -21,6 +21,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 11 | Message Batches API | [`11-message-batches/`](11-message-batches/) |
 | 12 | Managed Agents | [`12-managed-agents/`](12-managed-agents/) |
 | 13 | Packaging Workflows | [`13-packaging-workflows/`](13-packaging-workflows/) |
+| 14 | MCP Servers & Access Auditing | [`14-mcp-servers/`](14-mcp-servers/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -105,6 +106,10 @@ claude-cert/
 │   ├── local-marketplace/                    ← catalogs packaging-demo via a local path
 │   ├── sdk_fixture/                          ← standalone project fixture for the SDK script
 │   └── 1_agent_sdk_setting_sources.py
+├── 14-mcp-servers/
+│   ├── README.md
+│   ├── access-audit-demo/                    ← real plugin: PostToolUse hook, audits every tool call
+│   └── local-marketplace/                    ← catalogs access-audit-demo via a local path
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies

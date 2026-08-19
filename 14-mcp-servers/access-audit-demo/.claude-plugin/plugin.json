@@ -1,0 +1,4 @@
+{
+  "name": "access-audit-demo",
+  "description": "Module 14 demo plugin — a PostToolUse hook that deterministically logs every tool call (name + input) to a centralized audit log, regardless of what the model says or does in its response."
+}

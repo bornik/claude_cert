@@ -4,3 +4,4 @@ __pycache__/
 .venv/
 .claude/settings.local.json
 12-managed-agents/.managed_agents_state.json
+14-mcp-servers/access-audit-demo/audit.log

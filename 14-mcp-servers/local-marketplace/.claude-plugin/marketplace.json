@@ -1,0 +1,13 @@
+{
+  "name": "mcp-servers-demo-marketplace",
+  "owner": {
+    "name": "claude-cert learner"
+  },
+  "plugins": [
+    {
+      "name": "access-audit-demo",
+      "source": "../access-audit-demo",
+      "description": "Module 14 demo plugin — a PostToolUse hook that deterministically logs every tool call to a centralized audit log."
+    }
+  ]
+}
