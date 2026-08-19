@@ -1,0 +1,13 @@
+{
+  "name": "packaging-workflows-demo-marketplace",
+  "owner": {
+    "name": "claude-cert learner"
+  },
+  "plugins": [
+    {
+      "name": "packaging-demo",
+      "source": "../packaging-demo",
+      "description": "Module 13 demo plugin — bundles an auto-invoked skill, an explicit-only skill, and a PreToolUse hook."
+    }
+  ]
+}
