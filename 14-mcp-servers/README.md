@@ -8,23 +8,26 @@ surface (the API's MCP Connector: `mcp_toolset`, `defer_loading`, per-tool
 `enabled`) is already covered live in
 [`04-tool-use-schema-design/7_mcp_connector.py`](../04-tool-use-schema-design/7_mcp_connector.py)
 and isn't re-demonstrated here. This module is a hands-on CLI walkthrough
-in two parts: connecting a real MCP server (transport + scope), and a
-`PostToolUse` hook that deterministically audits every tool call —
-including calls the server from part 1 makes.
+in two parts (connecting a real MCP server, and a `PostToolUse` hook that
+audits every tool call), plus one Python script for the piece that's pure
+MCP protocol rather than a CLI mechanic: resources.
 
 ## Requirements
 
-The Claude Code CLI itself, run from inside this repo. Part 1 uses
-DeepWiki, the same public, no-auth remote MCP server used in module 04's
-script — no account needed. The optional GitHub MCP step needs a GitHub
-account and a Personal Access Token; skip it if you don't want to set one
-up, the config pattern is the point, not the live call.
+The CLI walkthrough parts need the Claude Code CLI itself, run from inside
+this repo. Part 1 uses DeepWiki, the same public, no-auth remote MCP
+server used in module 04's script — no account needed. The optional
+GitHub MCP step needs a GitHub account and a Personal Access Token; skip
+it if you don't want to set one up, the config pattern is the point, not
+the live call. The resources script only needs the Python environment
+(`uv run`), same as every other module's scripts.
 
 ## Files
 
 ```
 14-mcp-servers/
 ├── README.md
+├── 1_mcp_resources_direct_vs_templated.py  ← direct vs. templated resources, in-process MCP server+client
 ├── access-audit-demo/                   ← a real, minimal plugin
 │   ├── .claude-plugin/plugin.json
 │   └── hooks/
@@ -32,6 +35,45 @@ up, the config pattern is the point, not the live call.
 │       └── log_tool_call.py             ← appends one JSON line per tool call
 └── local-marketplace/
     └── .claude-plugin/marketplace.json  ← lists access-audit-demo via "../access-audit-demo"
+```
+
+---
+
+### 1️⃣ `1_mcp_resources_direct_vs_templated.py` — Direct vs. Templated Resources
+
+**What:** Besides tools, an MCP server can expose resources — read-only
+data a client fetches directly by address instead of the model calling a
+tool for it. This script builds a minimal server with one of each
+resource shape and connects an in-memory client session straight to it
+(`mcp.shared.memory` — no subprocess, no CLI, no Claude Code session).
+
+**Key concepts:**
+- **Direct resource** (`docs://list`): a fixed address, no parameters —
+  the server returns the same static payload every time. Reported through
+  `list_resources()`.
+- **Templated resource** (`docs://file/{document_id}`): the address
+  carries a `{placeholder}` the caller fills in per request to reach one
+  of many items. Reported through the separate `list_resource_templates()`
+  endpoint — a resource is one shape or the other, never listed as both.
+- Reading a direct resource takes no argument (`read_resource("docs://list")`);
+  reading a templated one means substituting a real id into the
+  placeholder (`read_resource("docs://file/readme")`).
+- Pulling a **direct** resource into context up front is cheaper and
+  faster than a tool call — there's nothing to decide, one fixed address,
+  one fixed payload. A **templated** resource trades that simplicity for
+  reach, but the caller still has to supply an id — the same shape of
+  decision a tool call requires.
+- Whether a client actually *offers* resources to the model at all (e.g.
+  Claude Code's `@server:resource://uri` mention syntax) is a
+  **client**-side feature, not something the server can force — always
+  check client support before designing an architecture around it.
+
+**When to use:** Whenever you're deciding tool vs. resource for read-only
+data a client could just attach to context instead of the model spending
+a turn calling a tool for it
+
+```bash
+uv run 14-mcp-servers/1_mcp_resources_direct_vs_templated.py
 ```
 
 ---
@@ -181,7 +223,12 @@ actions, which it can forget, summarize away, or simply decline.
   [`04-tool-use-schema-design/7_mcp_connector.py`](../04-tool-use-schema-design/7_mcp_connector.py).
   This module is about Claude Code's own MCP *client* (CLI transport and
   scope), a different connection path to the same protocol.
-- **Resources and prompts** — the other two things an MCP server can
-  expose besides tools. Resource-injection support varies by client and
-  isn't something this repo's CLI setup can reliably demo, so it's
-  documented in the lesson text rather than faked here.
+- **Prompts** — the third thing an MCP server can expose besides tools
+  and resources. Not demonstrated separately; the SDK mechanics
+  (`@mcp.prompt`) mirror `@mcp.resource` closely enough that it isn't a
+  new concept once you've seen `1_mcp_resources_direct_vs_templated.py`.
+- **Resources via Claude Code's own client** (the `@server:resource://uri`
+  mention syntax) — that's a CLI/client feature layered on top of the
+  protocol mechanics `1_mcp_resources_direct_vs_templated.py` demonstrates
+  directly; whether it's supported at all varies by client, so it's
+  called out in that script's own docstring rather than relied on here.

@@ -190,6 +190,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "anthropic" },
     { name = "claude-agent-sdk" },
+    { name = "mcp" },
     { name = "python-dotenv" },
 ]
 
@@ -197,6 +198,7 @@ dependencies = [
 requires-dist = [
     { name = "anthropic", specifier = ">=0.120.2" },
     { name = "claude-agent-sdk", specifier = ">=0.2.134" },
+    { name = "mcp", specifier = ">=1.29.0" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
 
