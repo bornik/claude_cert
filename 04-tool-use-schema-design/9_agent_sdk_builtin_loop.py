@@ -39,7 +39,7 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 # Enable debug logging to see what's sent to Claude
 if os.getenv("DEBUG_SDK"):

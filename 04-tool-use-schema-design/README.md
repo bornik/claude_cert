@@ -180,6 +180,25 @@ uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py
 
 ---
 
+### 🔟 `10_agent_sdk_subagents.py` — Real Subagent Delegation
+
+**What:** The orchestrator is only given the `Task` tool — no direct access to the custom `get_weather` tool at all. The only way it can answer "What's the weather in Paris?" is by delegating to a `weather-checker` subagent (`AgentDefinition`) that alone has the weather tool. This is a genuinely separate Claude turn, not the "second bare API call" stand-in used in Module 09.
+
+**Key concepts:**
+- `AgentDefinition(description=..., prompt=..., tools=[...])` — a named subagent with its own system prompt and its own restricted tool list, registered via `ClaudeAgentOptions(agents={"name": AgentDefinition(...)})`
+- The orchestrator delegates through a tool_use block named `Agent` carrying `subagent_type` in its input — that ability comes entirely from having the `Task` tool; remove it and delegation is impossible
+- Subagents launch in the background by default: the orchestrator's first reply is a placeholder ("I've launched the agent... running in the background") with its own `ResultMessage`, then a second turn — triggered once `TaskNotificationMessage` reports the subagent is done — delivers the real answer with a second `ResultMessage`. Two turns of one `query()` call, not two calls
+- Each subagent turn carries its own isolated token usage (visible in `TaskNotificationMessage.usage`), separate from the orchestrator's own accounting
+- Scoping tools per-`AgentDefinition` is also how you'd keep an orchestrator away from a capability (Bash, a sensitive MCP tool) that only one specialized subagent should touch
+
+**When to use:** After `9_agent_sdk_builtin_loop.py`, once you've seen one agent drive its own tool loop and want to see it hand off a subtask to a differently-scoped agent instead
+
+```bash
+uv run 04-tool-use-schema-design/10_agent_sdk_subagents.py
+```
+
+---
+
 ## Recommended Learning Path
 
 1. **Start:** `0_structured_output.py` — constrain response format (simplest case)
@@ -191,7 +210,8 @@ uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py
 7. **Then:** `5_error_handling.py` — production robustness (error handling)
 8. **Then:** `7_mcp_connector.py` — see the alternative to writing schemas yourself (MCP)
 9. **Then:** `8_id_mismatch_bug.py` — see the id-matching invariant break and get fixed
-10. **Finally:** `9_agent_sdk_builtin_loop.py` — see the loop run by a purpose-built SDK
+10. **Then:** `9_agent_sdk_builtin_loop.py` — see the loop run by a purpose-built SDK
+11. **Finally:** `10_agent_sdk_subagents.py` — see that same SDK hand a subtask to a real, separately-scoped subagent
 
 ---
 
@@ -209,6 +229,7 @@ uv run 04-tool-use-schema-design/6_boundary_case_failure.py
 uv run 04-tool-use-schema-design/7_mcp_connector.py  # expensive (~165k input tokens) — don't loop this one
 uv run 04-tool-use-schema-design/8_id_mismatch_bug.py  # triggers and fixes a real tool_use_id mismatch error
 uv run 04-tool-use-schema-design/9_agent_sdk_builtin_loop.py  # needs the `claude` CLI installed, not just ANTHROPIC_API_KEY
+uv run 04-tool-use-schema-design/10_agent_sdk_subagents.py  # needs the `claude` CLI installed too
 ```
 
 ---
