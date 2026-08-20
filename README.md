@@ -22,6 +22,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 12 | Managed Agents | [`12-managed-agents/`](12-managed-agents/) |
 | 13 | Packaging Workflows | [`13-packaging-workflows/`](13-packaging-workflows/) |
 | 14 | MCP Servers & Access Auditing | [`14-mcp-servers/`](14-mcp-servers/) |
+| 15 | Prompt Caching | [`15-prompt-caching/`](15-prompt-caching/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -110,6 +111,9 @@ claude-cert/
 │   ├── README.md
 │   ├── access-audit-demo/                    ← real plugin: PostToolUse hook, audits every tool call
 │   └── local-marketplace/                    ← catalogs access-audit-demo via a local path
+├── 15-prompt-caching/
+│   ├── README.md
+│   └── 1_cache_threshold_and_ttl.py
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
