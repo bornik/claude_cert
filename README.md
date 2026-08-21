@@ -23,6 +23,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 13 | Packaging Workflows | [`13-packaging-workflows/`](13-packaging-workflows/) |
 | 14 | MCP Servers & Access Auditing | [`14-mcp-servers/`](14-mcp-servers/) |
 | 15 | Prompt Caching | [`15-prompt-caching/`](15-prompt-caching/) |
+| 16 | Classical RAG vs. Agentic Search | [`16-rag-vs-agentic-search/`](16-rag-vs-agentic-search/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -69,7 +70,8 @@ claude-cert/
 ├── 05-streaming-responses/
 │   ├── README.md
 │   ├── 1_basic_streaming.py
-│   └── 2_streaming_with_progress.py
+│   ├── 2_streaming_with_progress.py
+│   └── 3_streaming_tool_use_json_deltas.py
 ├── 06-context-engineering/
 │   ├── README.md
 │   ├── 1_context_window_growth.py
@@ -114,6 +116,9 @@ claude-cert/
 ├── 15-prompt-caching/
 │   ├── README.md
 │   └── 1_cache_threshold_and_ttl.py
+├── 16-rag-vs-agentic-search/
+│   ├── README.md
+│   └── 1_classical_rag_vs_agentic_search.py
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
@@ -231,8 +236,9 @@ Details: see [`03-extended-thinking/README.md`](03-extended-thinking/README.md).
 ### Module 05 — Streaming Responses
 
 ```bash
-uv run 05-streaming-responses/1_basic_streaming.py           # text_stream helper
-uv run 05-streaming-responses/2_streaming_with_progress.py   # raw events + token tracking
+uv run 05-streaming-responses/1_basic_streaming.py                  # text_stream helper
+uv run 05-streaming-responses/2_streaming_with_progress.py          # raw events + token tracking
+uv run 05-streaming-responses/3_streaming_tool_use_json_deltas.py   # reconstructing a streamed tool call's input
 ```
 
 Details: see [`05-streaming-responses/README.md`](05-streaming-responses/README.md).
