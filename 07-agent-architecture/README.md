@@ -38,3 +38,16 @@ uv run 07-agent-architecture/2_over_tooling.py
 ```bash
 uv run 07-agent-architecture/3_exit_conditions.py
 ```
+
+### 4️⃣ `4_state_graph_workflow.py` — A Third Option: Structure Plus Selective Discretion
+**What:** A support-ticket graph with explicit nodes and an explicit transition table (not model-decided control flow), where exactly one node (`classify`) calls Claude and every other node is plain Python. A hand-rolled `StateGraph` class stands in for a framework like LangGraph — same shape, no new dependency. Demo 1 shows a low-severity ticket skip straight from `classify` to `resolve`, never touching the human-approval node at all. Demo 2 shows a high-severity ticket hit `await_approval`, write a checkpoint file, and pause — then simulates a process restart (`del`-ing every in-memory variable) before reloading state from that file alone and resuming exactly where it left off.
+
+**Key concepts:**
+- Answers "team needs durable state, explicit transition rules, resumable human approvals, and visual inspection of every branch, with model discretion only where it adds value" — each requirement maps to one piece here: the JSON checkpoint (durable), the transition table (explicit rules), the human-gate check in `run()` (resumable approval, surviving a real discard-and-reload, not just a blocking `input()` inside one function call), and `graph.describe()` (every declared branch printed upfront, including ones a given run never takes)
+- This is neither script 1's workflow (no model calls at all) nor its agent (the model decides everything) — `classify` is the only node using model discretion, exactly because free-text severity judgment is the one place a fixed if/else can't do the job
+- `graph.describe()` can list every possible transition because the graph *is* data (a transition table) — contrast with an agent's control flow, which only exists at runtime, as whatever Claude happens to decide
+- The checkpoint write happens *before* the human is asked anything — the pause is durable from the moment the graph reaches the gate, not just for the duration one `input()` call is blocking
+
+```bash
+uv run 07-agent-architecture/4_state_graph_workflow.py
+```
