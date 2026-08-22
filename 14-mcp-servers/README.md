@@ -9,8 +9,9 @@ surface (the API's MCP Connector: `mcp_toolset`, `defer_loading`, per-tool
 [`04-tool-use-schema-design/7_mcp_connector.py`](../04-tool-use-schema-design/7_mcp_connector.py)
 and isn't re-demonstrated here. This module is a hands-on CLI walkthrough
 in two parts (connecting a real MCP server, and a `PostToolUse` hook that
-audits every tool call), plus one Python script for the piece that's pure
-MCP protocol rather than a CLI mechanic: resources.
+audits every tool call), plus two Python scripts for the pieces that are
+pure MCP protocol rather than a CLI mechanic: resources, and a real
+stdio server exposing local documents alongside a conversion tool.
 
 ## Requirements
 
@@ -19,8 +20,10 @@ this repo. Part 1 uses DeepWiki, the same public, no-auth remote MCP
 server used in module 04's script — no account needed. The optional
 GitHub MCP step needs a GitHub account and a Personal Access Token; skip
 it if you don't want to set one up, the config pattern is the point, not
-the live call. The resources script only needs the Python environment
-(`uv run`), same as every other module's scripts.
+the live call. The two Python scripts only need the Python environment
+(`uv run`), same as every other module's scripts. The optional MCP
+Inspector step in example 2 needs Node (`npx`), same as any
+`npx`-launched MCP server.
 
 ## Files
 
@@ -28,6 +31,10 @@ the live call. The resources script only needs the Python environment
 14-mcp-servers/
 ├── README.md
 ├── 1_mcp_resources_direct_vs_templated.py  ← direct vs. templated resources, in-process MCP server+client
+├── 2_stdio_docs_server_test_client.py      ← real stdio subprocess: docs as resources, conversion as a tool
+├── docs-server/                          ← the server example 2 launches and tests
+│   ├── server.py                         ← FastMCP, stdio transport
+│   └── docs/architecture.md, api-notes.md  ← real local "engineering documents"
 ├── access-audit-demo/                   ← a real, minimal plugin
 │   ├── .claude-plugin/plugin.json
 │   └── hooks/
@@ -74,6 +81,63 @@ a turn calling a tool for it
 
 ```bash
 uv run 14-mcp-servers/1_mcp_resources_direct_vs_templated.py
+```
+
+---
+
+### 2️⃣ `2_stdio_docs_server_test_client.py` — A Real stdio Server: Docs as Resources, Conversion as a Tool
+
+**What:** Answers an exam scenario directly: a team building an MCP
+server for local engineering documents, where Claude should read the
+documents as context, run one approved conversion operation, and the
+team needs to test the server before wiring it up to production
+clients. [`docs-server/server.py`](docs-server/server.py) is that
+server — real files on disk under `docs-server/docs/`, exposed as
+resources (`docs://list`, `docs://file/{filename}`), plus one tool,
+`convert_markdown_to_text`, that strips Markdown formatting and returns
+plain text without ever writing back to the source file. This script
+launches it as an actual OS subprocess over stdio (`mcp.client.stdio`,
+not `mcp.shared.memory`'s in-process session from example 1) and drives
+it through discovery, two resource reads, and two tool calls (one
+success, one on a missing file) — a scripted, repeatable stand-in for
+what a developer would otherwise click through by hand.
+
+**Key concepts:**
+- **Resources for documents, a tool for the conversion** — the exact
+  split the exam question is testing. Reading a document is retrieval;
+  Claude shouldn't spend a tool-call turn deciding *whether* to fetch
+  something it should just have as context. Converting one is an
+  operation with a real effect (producing a new representation), which
+  is what a tool is for.
+- **stdio, not HTTP** — the documents and the client are on the same
+  machine, so there's no remote service to reach. This is the local
+  counterpart to Part 1's DeepWiki connection below: same protocol,
+  different transport because the deployment shape is different.
+- **A real subprocess** — `StdioServerParameters(command=sys.executable,
+  args=[...])` + `stdio_client(...)` launches `server.py` as its own OS
+  process; the "Connected. This is a separate OS process" line in the
+  script's own output isn't decorative, it's the thing distinguishing
+  this from example 1's in-memory session.
+- **Test before production** — this script's whole job is the "test the
+  server before connecting it to production clients" half of the exam
+  answer, done in code. Its interactive twin is MCP Inspector, below.
+
+**Try it — interactively, with MCP Inspector:**
+```bash
+npx @modelcontextprotocol/inspector uv run 14-mcp-servers/docs-server/server.py
+```
+This launches the same server and opens a browser UI where you can run
+the identical checks by hand: the *Resources* tab lists `docs://list`
+and the `docs://file/{filename}` template and lets you read either one;
+the *Tools* tab lists `convert_markdown_to_text` and lets you call it
+with a real `filename` argument (try `architecture.md`, then a filename
+that doesn't exist) and see the raw result. This is the concrete "MCP
+Inspector" the exam answer names — a scriptable pass and an interactive
+one checking the same server, either being a reasonable way to satisfy
+"test before connecting to production clients."
+
+```bash
+uv run 14-mcp-servers/2_stdio_docs_server_test_client.py
 ```
 
 ---

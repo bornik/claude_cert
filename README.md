@@ -112,6 +112,9 @@ claude-cert/
 │   └── 1_agent_sdk_setting_sources.py
 ├── 14-mcp-servers/
 │   ├── README.md
+│   ├── 1_mcp_resources_direct_vs_templated.py  ← direct vs. templated resources, in-process
+│   ├── 2_stdio_docs_server_test_client.py      ← real stdio subprocess: docs as resources, conversion as a tool
+│   ├── docs-server/                          ← server.py (FastMCP, stdio) + sample docs example 2 tests
 │   ├── access-audit-demo/                    ← real plugin: PostToolUse hook, audits every tool call
 │   └── local-marketplace/                    ← catalogs access-audit-demo via a local path
 ├── 15-prompt-caching/
