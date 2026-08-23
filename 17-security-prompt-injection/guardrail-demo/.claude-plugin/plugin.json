@@ -1,0 +1,4 @@
+{
+  "name": "security-guardrail-demo",
+  "description": "Module 17 demo plugin — a PreToolUse hook enforcing Deny > Ask > Allow: denies writes outside its own output folder and network calls to non-allow-listed domains, asks before a git push, and audit-logs every decision regardless of the model's own behavior."
+}

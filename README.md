@@ -24,6 +24,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 14 | MCP Servers & Access Auditing | [`14-mcp-servers/`](14-mcp-servers/) |
 | 15 | Prompt Caching | [`15-prompt-caching/`](15-prompt-caching/) |
 | 16 | Classical RAG vs. Agentic Search | [`16-rag-vs-agentic-search/`](16-rag-vs-agentic-search/) |
+| 17 | Security & Prompt Injection Defense | [`17-security-prompt-injection/`](17-security-prompt-injection/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -123,6 +124,11 @@ claude-cert/
 ├── 16-rag-vs-agentic-search/
 │   ├── README.md
 │   └── 1_classical_rag_vs_agentic_search.py
+├── 17-security-prompt-injection/
+│   ├── README.md
+│   ├── 1_indirect_prompt_injection.py        ← attack + 3 layered defenses, same script
+│   ├── guardrail-demo/                       ← real plugin: PreToolUse hook, Deny > Ask > Allow
+│   └── local-marketplace/                    ← catalogs guardrail-demo via a local path
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies

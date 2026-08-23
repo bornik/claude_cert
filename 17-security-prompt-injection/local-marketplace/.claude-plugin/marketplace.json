@@ -1,0 +1,13 @@
+{
+  "name": "security-demo-marketplace",
+  "owner": {
+    "name": "claude-cert learner"
+  },
+  "plugins": [
+    {
+      "name": "security-guardrail-demo",
+      "source": "../guardrail-demo",
+      "description": "Module 17 demo plugin — a PreToolUse hook enforcing Deny > Ask > Allow with audit logging."
+    }
+  ]
+}
