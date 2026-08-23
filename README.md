@@ -27,6 +27,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 17 | Security & Prompt Injection Defense | [`17-security-prompt-injection/`](17-security-prompt-injection/) |
 | 18 | Defining Done: Evals & a Calibrated Judge | [`18-evals-and-judge/`](18-evals-and-judge/) |
 | 19 | Multi-Agent Orchestration as a Deliberate Tradeoff | [`19-multi-agent-orchestration/`](19-multi-agent-orchestration/) |
+| 20 | Cumulative Production-Hardening Task | [`20-cumulative-hardening/`](20-cumulative-hardening/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -138,6 +139,10 @@ claude-cert/
 ├── 19-multi-agent-orchestration/
 │   ├── README.md
 │   └── 1_orchestrator_worker_tradeoff.py     ← plan/parallel-fan-out/synthesize, cost multiplier, tiering, failure handling
+├── 20-cumulative-hardening/
+│   ├── README.md
+│   ├── 1_buggy_agent.py                      ← 3 planted defects (eval, retry, guardrail), all live
+│   └── 2_hardened_agent.py                   ← same function, one fix per defect
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
