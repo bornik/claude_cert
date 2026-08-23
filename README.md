@@ -26,6 +26,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 16 | Classical RAG vs. Agentic Search | [`16-rag-vs-agentic-search/`](16-rag-vs-agentic-search/) |
 | 17 | Security & Prompt Injection Defense | [`17-security-prompt-injection/`](17-security-prompt-injection/) |
 | 18 | Defining Done: Evals & a Calibrated Judge | [`18-evals-and-judge/`](18-evals-and-judge/) |
+| 19 | Multi-Agent Orchestration as a Deliberate Tradeoff | [`19-multi-agent-orchestration/`](19-multi-agent-orchestration/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -134,6 +135,9 @@ claude-cert/
 │   ├── README.md
 │   ├── example-design-doc.md                 ← filled 4-decision design doc for the demo's classifier
 │   └── 1_eval_pipeline_and_graders.py        ← exact match, code-graded, LLM-as-judge + calibration
+├── 19-multi-agent-orchestration/
+│   ├── README.md
+│   └── 1_orchestrator_worker_tradeoff.py     ← plan/parallel-fan-out/synthesize, cost multiplier, tiering, failure handling
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
