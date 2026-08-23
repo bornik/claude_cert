@@ -25,6 +25,7 @@ A hands-on companion for the Anthropic **Production-Grade Prompting, Agents & To
 | 15 | Prompt Caching | [`15-prompt-caching/`](15-prompt-caching/) |
 | 16 | Classical RAG vs. Agentic Search | [`16-rag-vs-agentic-search/`](16-rag-vs-agentic-search/) |
 | 17 | Security & Prompt Injection Defense | [`17-security-prompt-injection/`](17-security-prompt-injection/) |
+| 18 | Defining Done: Evals & a Calibrated Judge | [`18-evals-and-judge/`](18-evals-and-judge/) |
 
 As you reach a new module in the course, create `NN-module-name/` and add examples there — folder order should always match the course sidebar order.
 
@@ -129,6 +130,10 @@ claude-cert/
 │   ├── 1_indirect_prompt_injection.py        ← attack + 3 layered defenses, same script
 │   ├── guardrail-demo/                       ← real plugin: PreToolUse hook, Deny > Ask > Allow
 │   └── local-marketplace/                    ← catalogs guardrail-demo via a local path
+├── 18-evals-and-judge/
+│   ├── README.md
+│   ├── example-design-doc.md                 ← filled 4-decision design doc for the demo's classifier
+│   └── 1_eval_pipeline_and_graders.py        ← exact match, code-graded, LLM-as-judge + calibration
 ├── common/
 │   └── usage.py                     ← print_usage() — token count + est. cost after every API call
 ├── pyproject.toml / uv.lock         ← dependencies
